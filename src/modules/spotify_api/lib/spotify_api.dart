@@ -3,15 +3,38 @@ library spotify_api;
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 void main() async{
   SpotifyAlbum album = new SpotifyAlbum.withSearchTerm('Everywhere is somewhere');
   print(await SpotifyAPI()._searchForAlbumId(album));
 
-  if(album.found)
+  if(album.found) {
     await SpotifyAPI()._searchForAlbum(album);
+    print(SpotifyAPI().getReadableReleaseDate(album));
+  }else{
+    print('${album.searchTerm} not found');
+  }
 
-  print(album);
+  SpotifyAlbum album2 = new SpotifyAlbum.withSearchTerm('Night Of The Living Dregs');
+  print(await SpotifyAPI()._searchForAlbumId(album2));
+
+  if(album2.found) {
+    await SpotifyAPI()._searchForAlbum(album2);
+    print(SpotifyAPI().getReadableReleaseDate(album2));
+  }else{
+    print('${album2.searchTerm} not found');
+  }
+
+  SpotifyAlbum album3 = new SpotifyAlbum.withSearchTerm('I brought you my bullets');
+  print(await SpotifyAPI()._searchForAlbumId(album3));
+
+  if(album3.found) {
+    await SpotifyAPI()._searchForAlbum(album3);
+    print(SpotifyAPI().getReadableReleaseDate(album3));
+  }else{
+    print('${album3.searchTerm} not found');
+  }
 }
 
 /// Spotify integration.
@@ -42,20 +65,15 @@ class SpotifyAPI {
       );
 
       if (response.statusCode == 200) {
-        print('I Got A 200');
-        print('The response body was:');
-        print(response.body);
         Map<String, dynamic> decoded = json.decode(response.body);
         _accessToken = decoded['access_token'];
-        print(_accessToken);
         _accessTokenExpires = DateTime.now().add(new Duration(seconds: decoded['expires_in']));
-        print(_accessTokenExpires);
         success = true;
       } else{
         print('something went wrong, status code: ' + response.statusCode.toString());
       }
     } catch(error){
-      print('An error occured');
+      print('An error occured 1');
       print(error.toString());
     }
     return success;
@@ -80,9 +98,6 @@ class SpotifyAPI {
       );
 
       if (response.statusCode == 200) {
-        print('I Got A 200');
-        print('The response body was:');
-        print(response.body);
         Map<String, dynamic> decoded = json.decode(response.body);
         success = true;
         Map<String, dynamic> decodedAlbum = decoded['albums']['items'][0];
@@ -95,7 +110,7 @@ class SpotifyAPI {
         print('something went wrong, status code: ' + response.statusCode.toString());
       }
     } catch(error){
-      print('An error occured');
+      print('An error occured 2');
       print(error.toString());
     }
     return success;
@@ -120,22 +135,36 @@ class SpotifyAPI {
       );
 
       if (response.statusCode == 200) {
-        print('I Got A 200');
-        print('The response body was:');
-        print(response.body);
         Map<String, dynamic> decoded = json.decode(response.body);
         success = true;
+
         album.artists = '';
         List<dynamic> artists = decoded['artists'];
         for(int i = 0; i < artists.length; )
           album.artists += '${artists[i]['name']}${++i < artists.length?', ':''}';
 
         album.title = decoded['name'];
+        album.imageUrl = decoded['images'][0]['url'];
+        album.releaseDatePrecision = decoded['release_date_precision'];
+        switch(album.releaseDatePrecision){
+          case('day'):
+            album.releaseDate = DateFormat('yyyy-MM-dd').parse(decoded['release_date']);
+            break;
+          case('month'):
+            album.releaseDate = DateFormat('yyyy-MM').parse(decoded['release_date']);
+            break;
+          case('year'):
+            album.releaseDate = DateFormat('yyyy').parse(decoded['release_date']);
+            break;
+          default:
+            album.releaseDate = null;
+            break;
+        }
       } else{
         print('something went wrong, status code: ' + response.statusCode.toString());
       }
     } catch(error){
-      print('An error occured');
+      print('An error occured 3');
       print(error.toString());
     }
     return success;
@@ -148,13 +177,13 @@ class SpotifyAPI {
     {
       switch(album.releaseDatePrecision){
         case('day'):
-          output = "${album.releaseDate.day}-${album.releaseDate.month}-${album.releaseDate.year}";
+          output = DateFormat.yMMMMd().format(album.releaseDate);
           break;
         case('month'):
-          output = "${album.releaseDate.month}-${album.releaseDate.year}";
+          output = DateFormat.yMMMM().format(album.releaseDate);
           break;
         case('year'):
-          output = "${album.releaseDate.year}";
+          output = DateFormat.y().format(album.releaseDate);
           break;
         default:
           output = 'Unknown Date Format';
@@ -175,20 +204,20 @@ class SpotifyAlbum
         found = false,
         searchTerm = searchTerm;
 
-  String searchTerm;
   bool found;
-  String id;
-  String artists, title;
-  String imageUrl;
+  String searchTerm,
+      id,
+      artists,
+      title,
+      imageUrl,
+      releaseDatePrecision;
   DateTime releaseDate;
-  String releaseDatePrecision;
   List<SpotifyTrack> tracks;
-
 }
 
 class SpotifyTrack
 {
-  String title;
+  String title,
+        previewUrl;
   Duration length;
-  String previewUrl;
 }
