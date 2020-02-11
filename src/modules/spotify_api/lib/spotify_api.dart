@@ -125,9 +125,10 @@ class SpotifyAPI {
         print(response.body);
         Map<String, dynamic> decoded = json.decode(response.body);
         success = true;
-        album.artist = '';
-        for(int i = 0; i < decoded['artists']; )
-          album.artist += '${decoded['artists'][i]['name']}${++i < decoded['artists']?', ':''}';
+        album.artists = '';
+        List<dynamic> artists = decoded['artists'];
+        for(int i = 0; i < artists.length; )
+          album.artists += '${artists[i]['name']}${++i < artists.length?', ':''}';
 
         album.title = decoded['name'];
       } else{
@@ -177,7 +178,7 @@ class SpotifyAlbum
   String searchTerm;
   bool found;
   String id;
-  String artist, title;
+  String artists, title;
   String imageUrl;
   DateTime releaseDate;
   String releaseDatePrecision;
