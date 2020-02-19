@@ -3,6 +3,7 @@ name: Dart CI
 on: 
   push:
     paths: 
+      - .github/workflows/dart.yml
       - 'src/modules/spotfy_api/**'
 
 jobs:
