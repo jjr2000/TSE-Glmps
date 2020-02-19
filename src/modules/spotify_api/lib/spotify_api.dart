@@ -6,34 +6,23 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 void main() async{
-  SpotifyAlbum album = new SpotifyAlbum.withSearchTerm('Everywhere is somewhere');
-  print(await SpotifyAPI()._searchForAlbumId(album));
-
+  SpotifyAlbum album = await SpotifyAPI().search('Everywhere is somewhere');
   if(album.found) {
-    await SpotifyAPI()._searchForAlbum(album);
     print(SpotifyAPI().getReadableReleaseDate(album));
   }else{
     print('${album.searchTerm} not found');
   }
-
-  SpotifyAlbum album2 = new SpotifyAlbum.withSearchTerm('Night Of The Living Dregs');
-  print(await SpotifyAPI()._searchForAlbumId(album2));
-
-  if(album2.found) {
-    await SpotifyAPI()._searchForAlbum(album2);
-    print(SpotifyAPI().getReadableReleaseDate(album2));
+  album = await SpotifyAPI().search('Everlong');
+  if(album.found) {
+    print(SpotifyAPI().getReadableReleaseDate(album));
   }else{
-    print('${album2.searchTerm} not found');
+    print('${album.searchTerm} not found');
   }
-
-  SpotifyAlbum album3 = new SpotifyAlbum.withSearchTerm('I brought you my bullets');
-  print(await SpotifyAPI()._searchForAlbumId(album3));
-
-  if(album3.found) {
-    await SpotifyAPI()._searchForAlbum(album3);
-    print(SpotifyAPI().getReadableReleaseDate(album3));
+  album = await SpotifyAPI().search('Invaders Must Die');
+  if(album.found) {
+    print(SpotifyAPI().getReadableReleaseDate(album));
   }else{
-    print('${album3.searchTerm} not found');
+    print('${album.searchTerm} not found');
   }
 }
 
@@ -160,6 +149,12 @@ class SpotifyAPI {
             album.releaseDate = null;
             break;
         }
+        album.tracks.clear();
+        List<dynamic> tracks = decoded['tracks']['items'];
+        for(int i = 0; i < tracks.length; i++)
+          album.tracks.add(new SpotifyTrack(tracks[i]['name'], tracks[i]['preview_url'], Duration(milliseconds: tracks[i]['duration_ms'])));
+
+
       } else{
         print('something went wrong, status code: ' + response.statusCode.toString());
       }
@@ -168,6 +163,16 @@ class SpotifyAPI {
       print(error.toString());
     }
     return success;
+  }
+
+  Future<SpotifyAlbum> search(String searchTerm) async
+  {
+      SpotifyAlbum album = new SpotifyAlbum.withSearchTerm(searchTerm);
+      await SpotifyAPI()._searchForAlbumId(album);
+      if(album.found) {
+        await SpotifyAPI()._searchForAlbum(album);
+      }
+      return album;
   }
 
   String getReadableReleaseDate(SpotifyAlbum album)
@@ -198,11 +203,13 @@ class SpotifyAPI {
 class SpotifyAlbum
 {
   SpotifyAlbum():
-        found = false;
+        found = false,
+        tracks = new List<SpotifyTrack>();
 
   SpotifyAlbum.withSearchTerm(String searchTerm):
         found = false,
-        searchTerm = searchTerm;
+        searchTerm = searchTerm,
+        tracks = new List<SpotifyTrack>();
 
   bool found;
   String searchTerm,
@@ -217,6 +224,11 @@ class SpotifyAlbum
 
 class SpotifyTrack
 {
+  SpotifyTrack(String title, String previewUrl, Duration length):
+      title = title,
+      previewUrl = previewUrl,
+      length = length;
+
   String title,
         previewUrl;
   Duration length;
