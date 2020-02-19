@@ -24,6 +24,12 @@ void main() async{
   }else{
     print('${album.searchTerm} not found');
   }
+  album = await SpotifyAPI().search('Nevermind');
+  if(album.found) {
+    print(SpotifyAPI().getReadableReleaseDate(album));
+  }else{
+    print('${album.searchTerm} not found');
+  }
 }
 
 /// Spotify integration.
