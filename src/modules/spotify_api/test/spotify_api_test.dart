@@ -3,13 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spotify_api/spotify_api.dart';
 
 void main() {
-  /*
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
-    expect(() => calculator.addOne(null), throwsNoSuchMethodError);
+  test('Search for smells like teen spirit', () async {
+    final spotifyApi = SpotifyAPI();
+    expect((await spotifyApi.search('smells like teen spirit')).found, true);
   });
-  */
 }
