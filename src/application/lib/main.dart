@@ -5,13 +5,28 @@ void main() => runApp(MaterialApp(
     appBar: AppBar(
       title: Text("Glymps"),
       centerTitle: true,
+      backgroundColor: Colors.blueGrey[900],
     ),
     body: Center(
       child: Text("Camera stuff goes here")
     ),
-    floatingActionButton: FloatingActionButton(
-      child: Text("Button to start scanning")
+    floatingActionButton: Ink(
+      padding: EdgeInsets.all(10.0),
+      decoration: const ShapeDecoration(
+          shape: CircleBorder(),
+          color: Colors.blueGrey
+
+      ),
+      child: IconButton(
+        onPressed: () {
+
+        },
+        icon: Icon(Icons.search),
+        color: Colors.white,
+      ),
     ),
+
+
   ),
   title: "Glymps"
 ));
