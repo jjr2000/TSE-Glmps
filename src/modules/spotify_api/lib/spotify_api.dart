@@ -40,6 +40,7 @@ class SpotifyAPI {
       _accessToken,
       _clientId = '78a66d01fd95418a889fc7357bfed056',
       _clientSecret = '0a24f2c53a68463985038c7570a633d5';
+// ToDo: Place into config file
 
   DateTime _accessTokenExpires;
 
