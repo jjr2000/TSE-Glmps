@@ -1,31 +1,21 @@
 library spotify_api;
 
 import 'dart:async';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:safe_config/safe_config.dart';
 
 void main()
 {}
 
-class _ApplicationConfiguration extends Configuration {
-  _ApplicationConfiguration(String fileName) :
-        super.fromFile(File(fileName));
-
-  String accountsApiUrl,
-      apiUrl,
-      clientId,
-      clientSecret;
-}
-
 class SpotifyApi {
-  static _ApplicationConfiguration _config = new _ApplicationConfiguration(
-      "config.yaml");
 
   /// Spotify access token after gathering.
-  String _accessToken;
+  String _accountsApiUrl = 'https://accounts.spotify.com/api/',
+      _apiUrl = 'https://api.spotify.com/v1/',
+      _accessToken,
+      _clientId = '78a66d01fd95418a889fc7357bfed056',
+      _clientSecret = '0a24f2c53a68463985038c7570a633d5';
   DateTime _accessTokenExpires;
 
   ///Gets an auth token for all communication with Spotify.
@@ -34,11 +24,11 @@ class SpotifyApi {
     bool success = false;
     try {
       var response = await http.post(
-          _config.accountsApiUrl + 'token',
+          _accountsApiUrl + 'token',
           headers: {
             'Authorization': 'Basic ' +
                 base64.encode(
-                    utf8.encode(_config.clientId + ':' + _config.clientSecret))
+                    utf8.encode(_clientId + ':' + _clientSecret))
           },
           body: {
             'grant_type': 'client_credentials'
@@ -73,7 +63,7 @@ class SpotifyApi {
           throw Stream.error("Failed to get cradentials");
 
       var response = await http.get(Uri.parse(
-          _config.apiUrl
+          _apiUrl
               + 'search?q=' + Uri.encodeComponent(album.searchTerm)
               + "&type=album&market=GB")
           ,
@@ -112,7 +102,7 @@ class SpotifyApi {
           throw Stream.error("Failed to get cradentials");
 
       var response = await http.get(Uri.encodeFull(
-          _config.apiUrl
+          _apiUrl
               + 'albums/' + album.id
               + "?market=GB")
           ,
