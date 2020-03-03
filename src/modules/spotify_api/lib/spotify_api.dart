@@ -1,46 +1,28 @@
 library spotify_api;
 
 import 'dart:async';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:safe_config/safe_config.dart';
 
-void main() async{
-  SpotifyAlbum album = await SpotifyAPI().search('Everywhere is somewhere');
-  if(album.found) {
-    print(SpotifyAPI().getReadableReleaseDate(album));
-  }else{
-    print('${album.searchTerm} not found');
-  }
-  album = await SpotifyAPI().search('Everlong');
-  if(album.found) {
-    print(SpotifyAPI().getReadableReleaseDate(album));
-  }else{
-    print('${album.searchTerm} not found');
-  }
-  album = await SpotifyAPI().search('Invaders Must Die');
-  if(album.found) {
-    print(SpotifyAPI().getReadableReleaseDate(album));
-  }else{
-    print('${album.searchTerm} not found');
-  }
-  album = await SpotifyAPI().search('Nevermind');
-  if(album.found) {
-    print(SpotifyAPI().getReadableReleaseDate(album));
-  }else{
-    print('${album.searchTerm} not found');
-  }
+class _ApplicationConfiguration extends Configuration {
+  _ApplicationConfiguration(String fileName) :
+        super.fromFile(File(fileName));
+
+  String accountsApiUrl,
+      apiUrl,
+      clientId,
+      clientSecret;
 }
 
-/// Spotify integration.
-class SpotifyAPI {
-  /// Spotify endpoints and keys.
-  String _accountsApiUrl = 'https://accounts.spotify.com/api/',
-      _apiUrl = 'https://api.spotify.com/v1/',
-      _accessToken,
-      _clientId = '78a66d01fd95418a889fc7357bfed056',
-      _clientSecret = '0a24f2c53a68463985038c7570a633d5';
+class SpotifyApi {
+  static _ApplicationConfiguration _config = new _ApplicationConfiguration(
+      "config.yaml");
 
+  /// Spotify access token after gathering.
+  String _accessToken;
   DateTime _accessTokenExpires;
 
   ///Gets an auth token for all communication with Spotify.
@@ -49,10 +31,11 @@ class SpotifyAPI {
     bool success = false;
     try {
       var response = await http.post(
-          _accountsApiUrl + 'token',
+          _config.accountsApiUrl + 'token',
           headers: {
             'Authorization': 'Basic ' +
-                base64.encode(utf8.encode(_clientId + ':' + _clientSecret))
+                base64.encode(
+                    utf8.encode(_config.clientId + ':' + _config.clientSecret))
           },
           body: {
             'grant_type': 'client_credentials'
@@ -62,12 +45,14 @@ class SpotifyAPI {
       if (response.statusCode == 200) {
         Map<String, dynamic> decoded = json.decode(response.body);
         _accessToken = decoded['access_token'];
-        _accessTokenExpires = DateTime.now().add(new Duration(seconds: decoded['expires_in']));
+        _accessTokenExpires =
+            DateTime.now().add(new Duration(seconds: decoded['expires_in']));
         success = true;
-      } else{
-        print('something went wrong, status code: ' + response.statusCode.toString());
+      } else {
+        print('something went wrong, status code: ' +
+            response.statusCode.toString());
       }
-    } catch(error){
+    } catch (error) {
       print('An error occured 1');
       print(error.toString());
     }
@@ -77,14 +62,16 @@ class SpotifyAPI {
   Future<bool> _searchForAlbumId(SpotifyAlbum album) async
   {
     bool success = false;
-    try{
-      if((_accessToken != null ? _accessToken.isEmpty : true) || (_accessTokenExpires != null ? _accessTokenExpires.isAfter(DateTime.now()) : true))
-        if(!await _getClientCredentials())
+    try {
+      if ((_accessToken != null ? _accessToken.isEmpty : true) ||
+          (_accessTokenExpires != null ? _accessTokenExpires.isAfter(
+              DateTime.now()) : true))
+        if (!await _getClientCredentials())
           throw Stream.error("Failed to get cradentials");
 
-      var response = await http.get(Uri.encodeFull(
-          _apiUrl
-              + 'search?q=' + album.searchTerm
+      var response = await http.get(Uri.parse(
+          _config.apiUrl
+              + 'search?q=' + Uri.encodeComponent(album.searchTerm)
               + "&type=album&market=GB")
           ,
           headers: {
@@ -96,15 +83,15 @@ class SpotifyAPI {
         Map<String, dynamic> decoded = json.decode(response.body);
         success = true;
         Map<String, dynamic> decodedAlbum = decoded['albums']['items'][0];
-        if(decodedAlbum != null)
-        {
+        if (decodedAlbum != null) {
           album.found = true;
           album.id = decodedAlbum['id'];
         }
-      } else{
-        print('something went wrong, status code: ' + response.statusCode.toString());
+      } else {
+        print('something went wrong, status code: ' +
+            response.statusCode.toString());
       }
-    } catch(error){
+    } catch (error) {
       print('An error occured 2');
       print(error.toString());
     }
@@ -114,13 +101,15 @@ class SpotifyAPI {
   Future<bool> _searchForAlbum(SpotifyAlbum album) async
   {
     bool success = false;
-    try{
-      if((_accessToken != null ? _accessToken.isEmpty : true) || (_accessTokenExpires != null ? _accessTokenExpires.isAfter(DateTime.now()) : true))
-        if(!await _getClientCredentials())
+    try {
+      if ((_accessToken != null ? _accessToken.isEmpty : true) ||
+          (_accessTokenExpires != null ? _accessTokenExpires.isAfter(
+              DateTime.now()) : true))
+        if (!await _getClientCredentials())
           throw Stream.error("Failed to get cradentials");
 
       var response = await http.get(Uri.encodeFull(
-          _apiUrl
+          _config.apiUrl
               + 'albums/' + album.id
               + "?market=GB")
           ,
@@ -135,21 +124,25 @@ class SpotifyAPI {
 
         album.artists = '';
         List<dynamic> artists = decoded['artists'];
-        for(int i = 0; i < artists.length; )
-          album.artists += '${artists[i]['name']}${++i < artists.length?', ':''}';
+        for (int i = 0; i < artists.length;)
+          album.artists +=
+          '${artists[i]['name']}${++i < artists.length ? ', ' : ''}';
 
         album.title = decoded['name'];
         album.imageUrl = decoded['images'][0]['url'];
         album.releaseDatePrecision = decoded['release_date_precision'];
-        switch(album.releaseDatePrecision){
+        switch (album.releaseDatePrecision) {
           case('day'):
-            album.releaseDate = DateFormat('yyyy-MM-dd').parse(decoded['release_date']);
+            album.releaseDate =
+                DateFormat('yyyy-MM-dd').parse(decoded['release_date']);
             break;
           case('month'):
-            album.releaseDate = DateFormat('yyyy-MM').parse(decoded['release_date']);
+            album.releaseDate =
+                DateFormat('yyyy-MM').parse(decoded['release_date']);
             break;
           case('year'):
-            album.releaseDate = DateFormat('yyyy').parse(decoded['release_date']);
+            album.releaseDate =
+                DateFormat('yyyy').parse(decoded['release_date']);
             break;
           default:
             album.releaseDate = null;
@@ -157,14 +150,15 @@ class SpotifyAPI {
         }
         album.tracks.clear();
         List<dynamic> tracks = decoded['tracks']['items'];
-        for(int i = 0; i < tracks.length; i++)
-          album.tracks.add(new SpotifyTrack(tracks[i]['name'], tracks[i]['preview_url'], Duration(milliseconds: tracks[i]['duration_ms'])));
-
-
-      } else{
-        print('something went wrong, status code: ' + response.statusCode.toString());
+        for (int i = 0; i < tracks.length; i++)
+          album.tracks.add(new SpotifyTrack(
+              tracks[i]['name'], tracks[i]['preview_url'],
+              Duration(milliseconds: tracks[i]['duration_ms'])));
+      } else {
+        print('something went wrong, status code: ' +
+            response.statusCode.toString());
       }
-    } catch(error){
+    } catch (error) {
       print('An error occured 3');
       print(error.toString());
     }
@@ -173,36 +167,12 @@ class SpotifyAPI {
 
   Future<SpotifyAlbum> search(String searchTerm) async
   {
-      SpotifyAlbum album = new SpotifyAlbum.withSearchTerm(searchTerm);
-      await SpotifyAPI()._searchForAlbumId(album);
-      if(album.found) {
-        await SpotifyAPI()._searchForAlbum(album);
-      }
-      return album;
-  }
-
-  String getReadableReleaseDate(SpotifyAlbum album)
-  {
-    String output;
-    if(album.found)
-    {
-      switch(album.releaseDatePrecision){
-        case('day'):
-          output = DateFormat.yMMMMd().format(album.releaseDate);
-          break;
-        case('month'):
-          output = DateFormat.yMMMM().format(album.releaseDate);
-          break;
-        case('year'):
-          output = DateFormat.y().format(album.releaseDate);
-          break;
-        default:
-          output = 'Unknown Date Format';
-          break;
-      }
+    SpotifyAlbum album = new SpotifyAlbum.withSearchTerm(searchTerm);
+    await _searchForAlbumId(album);
+    if (album.found) {
+      await _searchForAlbum(album);
     }
-
-    return output;
+    return album;
   }
 }
 
@@ -216,6 +186,30 @@ class SpotifyAlbum
         found = false,
         searchTerm = searchTerm,
         tracks = new List<SpotifyTrack>();
+
+  String getReadableReleaseDate()
+  {
+    String output;
+    if(this.found)
+    {
+      switch(this.releaseDatePrecision){
+        case('day'):
+          output = DateFormat.yMMMMd().format(this.releaseDate);
+          break;
+        case('month'):
+          output = DateFormat.yMMMM().format(this.releaseDate);
+          break;
+        case('year'):
+          output = DateFormat.y().format(this.releaseDate);
+          break;
+        default:
+          output = 'Unknown Date Format';
+          break;
+      }
+    }
+
+    return output;
+  }
 
   bool found;
   String searchTerm,
