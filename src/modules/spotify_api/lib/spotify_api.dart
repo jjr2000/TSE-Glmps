@@ -7,6 +7,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:safe_config/safe_config.dart';
 
+void main()
+{}
+
 class _ApplicationConfiguration extends Configuration {
   _ApplicationConfiguration(String fileName) :
         super.fromFile(File(fileName));
