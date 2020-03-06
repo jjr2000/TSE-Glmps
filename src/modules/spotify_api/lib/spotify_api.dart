@@ -1,21 +1,23 @@
 library spotify_api;
 
 import 'dart:async';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:yaml/yaml.dart';
 
-void main()
-{}
+void main() async
+{
+  SpotifyApi spotifyApi = new SpotifyApi();
+  SpotifyAlbum album = await spotifyApi.search('Nevermind');
+}
 
 class SpotifyApi {
 
+  YamlMap _config = loadYaml(File('config.yaml').readAsStringSync());
   /// Spotify access token after gathering.
-  String _accountsApiUrl = 'https://accounts.spotify.com/api/',
-      _apiUrl = 'https://api.spotify.com/v1/',
-      _accessToken,
-      _clientId = '78a66d01fd95418a889fc7357bfed056',
-      _clientSecret = '0a24f2c53a68463985038c7570a633d5';
+  String _accessToken;
   DateTime _accessTokenExpires;
 
   ///Gets an auth token for all communication with Spotify.
@@ -24,11 +26,11 @@ class SpotifyApi {
     bool success = false;
     try {
       var response = await http.post(
-          _accountsApiUrl + 'token',
+          _config['accountsApiUrl'] + 'token',
           headers: {
             'Authorization': 'Basic ' +
                 base64.encode(
-                    utf8.encode(_clientId + ':' + _clientSecret))
+                    utf8.encode(_config['clientId'] + ':' + _config['clientSecret']))
           },
           body: {
             'grant_type': 'client_credentials'
@@ -63,7 +65,7 @@ class SpotifyApi {
           throw Stream.error("Failed to get cradentials");
 
       var response = await http.get(Uri.parse(
-          _apiUrl
+          _config['apiUrl']
               + 'search?q=' + Uri.encodeComponent(album.searchTerm)
               + "&type=album&market=GB")
           ,
@@ -102,7 +104,7 @@ class SpotifyApi {
           throw Stream.error("Failed to get cradentials");
 
       var response = await http.get(Uri.encodeFull(
-          _apiUrl
+          _config['apiUrl']
               + 'albums/' + album.id
               + "?market=GB")
           ,
