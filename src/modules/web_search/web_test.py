@@ -16,8 +16,6 @@ web_detection.best_guess_labels
 web_detection.full_matching_images
 web_detection.pages_with_matching_images
 
-
-# recommend tags for the image based on data collected from the web
 for entity in web_detection.web_entities:
     print(entity.description)
     print(entity.score)
