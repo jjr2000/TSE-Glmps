@@ -7,12 +7,8 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:yaml/yaml.dart';
 
-void main() async
-{
-  SpotifyApi spotifyApi = new SpotifyApi();
-  SpotifyAlbum album = await spotifyApi.search('Nevermind');
-  int one = 1;
-}
+void main()
+{}
 
 class SpotifyApi {
 
