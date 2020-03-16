@@ -11,6 +11,7 @@ void main() async
 {
   SpotifyApi spotifyApi = new SpotifyApi();
   SpotifyAlbum album = await spotifyApi.search('Nevermind');
+  int one = 1;
 }
 
 class SpotifyApi {
@@ -145,10 +146,26 @@ class SpotifyApi {
         }
         album.tracks.clear();
         List<dynamic> tracks = decoded['tracks']['items'];
-        for (int i = 0; i < tracks.length; i++)
+        for (int i = 0; i < tracks.length; i++) {
+          String previewUrl = tracks[i]['preview_url'];
+          if(previewUrl?.isEmpty ?? true)
+          {
+            Uri itunesUri = Uri.parse(
+                _config['itunesUrl']
+                    + '/search?term=' + Uri.encodeComponent(tracks[i]['name'] + ', ' + album.artists)
+                    + "&limit=1&country=GB&entity=song");
+            var itunesResponse = await http.get(itunesUri);
+
+            if (itunesResponse.statusCode == 200) {
+              Map<String, dynamic> itunesDecoded = json.decode(itunesResponse.body);
+              if(itunesDecoded['resultCount'] == 1)
+                previewUrl = itunesDecoded['results'][0]['previewUrl'];
+            }
+          }
           album.tracks.add(new SpotifyTrack(
-              tracks[i]['name'], tracks[i]['preview_url'],
+              tracks[i]['name'], previewUrl,
               Duration(milliseconds: tracks[i]['duration_ms'])));
+        }
       } else {
         print('something went wrong, status code: ' +
             response.statusCode.toString());
