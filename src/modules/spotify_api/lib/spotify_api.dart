@@ -1,18 +1,22 @@
 library spotify_api;
 
 import 'dart:async';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:yaml/yaml.dart';
+import 'dart:io';
 
-void main()
-{}
+void main() async
+{
+  var spotifyApi = SpotifyApi();
+  SpotifyAlbum album = await spotifyApi.search('Nevermind');
+  album = album;
+}
 
 class SpotifyApi {
 
-  YamlMap _config = loadYaml(File('config/config.yaml').readAsStringSync());
+  YamlMap _config;
   /// Spotify access token after gathering.
   String _accessToken;
   DateTime _accessTokenExpires;
@@ -175,6 +179,9 @@ class SpotifyApi {
 
   Future<SpotifyAlbum> search(String searchTerm) async
   {
+    String config = await File('config/config.yaml').readAsString();
+    _config = loadYaml(config);
+
     SpotifyAlbum album = new SpotifyAlbum.withSearchTerm(searchTerm);
     await _searchForAlbumId(album);
     if (album.found) {
