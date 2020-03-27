@@ -12,7 +12,7 @@ void main()
 
 class SpotifyApi {
 
-  YamlMap _config = loadYaml(File('config.yaml').readAsStringSync());
+  YamlMap _config = loadYaml(File('config/config.yaml').readAsStringSync());
   /// Spotify access token after gathering.
   String _accessToken;
   DateTime _accessTokenExpires;
