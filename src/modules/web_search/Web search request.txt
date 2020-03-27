@@ -1,0 +1,3 @@
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"requests":  [{ "features":  [ {"type": "WEB_DETECTION"}], "image": {"source": { "imageUri": "https://upload.wikimedia.org/wikipedia/en/7/75/Dave_Psychodrama.jpeg"}}}]}' \
+  https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBUiCZi5ssEQHPQZPxXXwnx0_qpMiMQVaA
