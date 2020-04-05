@@ -156,7 +156,7 @@ class DisplayPictureScreen extends StatelessWidget {
         onPressed: () {
           File imageFile = new File(imagePath);
           List<int> imageBytes = imageFile.readAsBytesSync();
-          String base = base64Encode(imageBytes);
+          String base = base64UrlEncode(imageBytes);
 
           // Pass on to next widget here
           Navigator.push(
