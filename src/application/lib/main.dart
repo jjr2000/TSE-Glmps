@@ -81,7 +81,21 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return CameraPreview(_controller);
+            return Stack(
+              children: <Widget>[
+                CameraPreview(_controller),
+                ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    RadialGradient(
+
+                    ).createShader(bounds);
+                  },
+                  child: Container(
+
+                  ),
+                ),
+              ],
+            );
           } else {
             // Otherwise, display a loading indicator.
             return Center(child: CircularProgressIndicator());
