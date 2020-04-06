@@ -24,10 +24,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  uses-material-design: true
 
   # To add assets to your package, add an assets section, like this:
-  assets:
-   - config/config.yaml
+  # assets:
+  #  - assets/
 
   #
   # For details regarding assets in packages, see
