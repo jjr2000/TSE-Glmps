@@ -3,12 +3,8 @@ import numpy as np
 import base64
 from io import BytesIO
 from PIL import Image
-#import mapper
 import imutils
 import sys
-#import random
-#import scipy
-#from scipy import ndimage
 
 def from_base64(base64_data): #For converting a URL base64 string into a opencv image
         decodedData = base64.urlsafe_b64decode(base64_data) #Decoding
