@@ -12,6 +12,10 @@
       <excludeFolder url="file://$MODULE_DIR$/application/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/application/build" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/flutter_sound_lite/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/flutter_sound_lite/build" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/flutter_sound_lite/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/modules/flutter_sound_lite/example/build" />
       <excludeFolder url="file://$MODULE_DIR$/modules/spotify_api/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/modules/spotify_api/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/modules/spotify_api/build" />
