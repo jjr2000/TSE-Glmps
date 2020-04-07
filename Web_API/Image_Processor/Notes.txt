@@ -1,0 +1,27 @@
+Not all of these images will work, images 2,4,7,8,10.
+
+Issues
+
+-For example with image 7 and 8, there is a point that it incorrect. I need to implement something that will check the 4 points
+making sure they are all close enough +/- 50 pixels roughly. And if one and only one is out of line it will be changed.
+
+-When there are two shapes found, the smallest one needs to be deleted.
+
+-Too much high contrast backgrounds or with a lot of dynamic range in lighting,
+ will freak it out. Nothing can be done about this.
+
++++++++++++++++++Web pages that were very very helpful+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html
+
+^this whole site is a magical guide, has a lot of theory too*
+
+https://docs.opencv.org/3.4/d2/d96/tutorial_py_table_of_contents_imgproc.html
+
+*******^all the theory you need could ever need behind everything in OpenCV***********
+
+https://theailearner.com/2019/12/05/finding-convex-hull-opencv-python/
+https://stackoverflow.com/questions/14997733/advanced-square-detection-with-connected-region
+https://dsp.stackexchange.com/questions/3595/finding-squares-in-image
+https://pythontips.com/2015/03/11/a-guide-to-finding-books-in-images-using-python-and-opencv/
+^cool article
