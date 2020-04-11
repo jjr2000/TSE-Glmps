@@ -9,9 +9,6 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:spotify_api/spotify_api.dart';
 
-//List<CameraDescription> cameras;
-//CameraDescription firstCamera;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final cameras = await availableCameras();
@@ -180,10 +177,15 @@ class DisplayPictureScreen extends StatelessWidget {
         child: Icon(Icons.check),
         // Provide an onPressed callback.
         onPressed: () {
+          // Load image for rescale
           File imageFile = new File(imagePath);
+          // Read data
           List<int> imageBytes = imageFile.readAsBytesSync();
+          // Decode data for processing
           img.Image image = img.decodeImage(imageBytes);
+          // Rescale image
           img.Image resized = img.copyResize(image, width: 381);
+          // Encode image data into jpg represented as a base65 url safe string
           String base = base64UrlEncode(img.encodeJpg(resized));
 
           // Pass on to next widget here
