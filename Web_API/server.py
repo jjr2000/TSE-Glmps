@@ -16,7 +16,7 @@ api = Api(app)
 @app.route('/')
 
 def index(): #Default index of the website
-    return "hello welcome to GLIMPS, don't poke around here to much\n might crash"
+    return "hello welcome to GLIMPS, don't poke around here too much, it might crash :/"
 
 
 

@@ -57,8 +57,6 @@ def imageProc(image):   #Function contains all image processing (colour grading,
         return dilation
 
 def contours(image,processed):
-        foundAlbum = None       #used to store the image of the found album
-        foundFlag = False       #Used to check if the album has been found
         contours,hier = cv2.findContours(processed,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE) #Finding contours in the image
         #30000,200000 seem to be the right values 
         for cnt in contours: #Going through the array of contours
@@ -71,12 +69,8 @@ def contours(image,processed):
                                 points=np.float32([[0,0],[400,0],[400,400],[0,400]])  #map to 400*400 target image
                                 perspective=cv2.getPerspectiveTransform(approx,points)  #get the top view effect
                                 warp=cv2.warpPerspective(image,perspective,(400,400)) #if the album is at an angle then this will try and get it as if we were looking directly on top
-                                foundFlag = True
-                                foundAlbum = warp
-        if(foundFlag == True):
-                return foundAlbum  #If the album is found it is returned
-        else:
-                return False   #else if not 0 is returned
+                                return warp
+        
         
 def crop(image, coords):
         pass
@@ -95,6 +89,8 @@ def decodeBase64(filePath):     #I used this for debugging keeping it here incas
         retval, buffer = cv2.imencode('.jpg', im)       #encoding the decoded base64 string as a jpg image 
         cv2.imshow("hellppp", buffer)
         
+
+
          
 def findAlbum(b64String_in):
         #with open("12.jpg", "rb") as imageFile:
@@ -103,22 +99,24 @@ def findAlbum(b64String_in):
         #then converting it back to a regular image, this will all be replaced when integrated with the web api
         img = fromBase64(b64String_in)
         image= img
-        image = scale(image, 20) #scaling the image, but this is no longer required as the application will scale to reduce bandwidth needs and server processing
+        #image = scale(image, 20) #scaling the image, but this is no longer required as the application will scale to reduce bandwidth needs and server processing
 
         processed = imageProc(image) #applying image processing techniques
         image = contours(image,processed) #finding the contours and convexhull to find the album cover, then it gets cropped
-
+        
+        b64String_out = None    #if the album is not found it will default to None
+        
         try:
-                if image == False:
-                        return "None"
-        except ValueError:
                 retval, buffer = cv2.imencode('.jpg', image) #encoding the image as a jpg
                 b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
+                #return b64String_out #found album returned
+        except:
+                print("No album found")
+        else:
                 return b64String_out
-
-
         
-
+        
+        
 
 
 
