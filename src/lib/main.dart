@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:spotify_api/spotify_api.dart';
@@ -85,15 +86,20 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             return Stack(
               children: <Widget>[
                 CameraPreview(_controller),
-                ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    RadialGradient(
-
-                    ).createShader(bounds);
-                  },
+                Align(
+                  alignment: Alignment.center,
                   child: Container(
-
-                  ),
+                    child: FractionallySizedBox(
+                      widthFactor: 0.8,
+                      heightFactor: (MediaQuery.of(context).size.width / MediaQuery.of(context).size.height) * 0.9,
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                          color: Color.fromARGB(50, 255, 255, 255),
+                          width: 10
+                        )
+                      ),
+                    ),
                 ),
               ],
             );
@@ -105,6 +111,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
+        backgroundColor: Colors.black12,
+        foregroundColor: Colors.white,
         // Provide an onPressed callback.
         onPressed: () async {
           // Take the Picture in a try / catch block. If anything goes wrong,
@@ -138,6 +146,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
@@ -166,12 +175,16 @@ class DisplayPictureScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black12,
+        foregroundColor: Colors.white,
         child: Icon(Icons.check),
         // Provide an onPressed callback.
         onPressed: () {
           File imageFile = new File(imagePath);
           List<int> imageBytes = imageFile.readAsBytesSync();
-          String base = base64UrlEncode(imageBytes);
+          img.Image image = img.decodeImage(imageBytes);
+          img.Image resized = img.copyResize(image, width: 381);
+          String base = base64UrlEncode(img.encodeJpg(resized));
 
           // Pass on to next widget here
           Navigator.push(
@@ -182,6 +195,7 @@ class DisplayPictureScreen extends StatelessWidget {
           );
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
@@ -205,8 +219,9 @@ class _DisplayResultsScreenState extends State<DisplayResultsScreen> {
         centerTitle: true,
       ),
       body: Center(
-        child: Text(widget.imageBase64)
+        child: Text(widget.imageBase64) // Replace with next screen
       ),
     );
   }
 }
+
