@@ -12,7 +12,9 @@ def detect_web(imageBase):
     response = client.web_detection(image=image)
     annotations = response.web_detection
 
-    if annotations.best_guess_labels:
+    return annotations
+
+"""    if annotations.best_guess_labels:
         for label in annotations.best_guess_labels:
             print('\nBest guess label: {}'.format(label.label))
 
@@ -56,4 +58,5 @@ def detect_web(imageBase):
         raise Exception(
             '{}\nFor more info on error messages, check: '
             'https://cloud.google.com/apis/design/errors'.format(
-                response.error.message))
+                response.error.message)) """
+
