@@ -62,29 +62,16 @@ def contours(image,processed):
         for cnt in contours: #Going through the array of contours
                 if cv2.contourArea(cnt)>30000 and cv2.contourArea(cnt)<200000:  # remove small areas like noise etc but also preventing too big of a shape being found
                         hull = cv2.convexHull(cnt)    # find the convex hull of contour
-                        #cv2.circle(image,(77,285),5,[200,150,255],-1) # this is just for testing where certaint coordinates are
-                        #print(hull)
                         hull = cv2.approxPolyDP(hull,0.1*cv2.arcLength(hull,True),True) # Finding the approx shape based off the convex hull and arc lenght of the coords
-                        #print("after approx poly", hull, "end")
                         if len(hull)==4: #If the shape has 4 points
-                                #cv2.drawContours(image,[hull],0,(0,255,0),4) #drawing the shape
-                                #crop(image,hull)
-                                #(x,y,w,h) = (hull)
-                                #print(x,y,w,h)
-
+                                cv2.drawContours(image,[hull],0,(0,255,0),4)
                                 approx=mapper.mapp(hull)
-                                pts=np.float32([[0,0],[400,0],[400,400],[0,400]])  #map to 800*800 target window
-
-                                op=cv2.getPerspectiveTransform(approx,pts)  #get the top or bird eye view effect
-                                #cv2.imshow("op", op)
-                                dst=cv2.warpPerspective(image,op,(400,400))
-                                #cv2.imshow("final", dst)
-                                return dst
-        #processed = cv2.bitwise_not(processed)
-        #cv2.imshow("invt",processed)
-        print("no album found")
-        return 0
-
+                                points=np.float32([[0,0],[400,0],[400,400],[0,400]])  #map to 400*400 target image
+                                perspective=cv2.getPerspectiveTransform(approx,points)  #get the top view effect
+                                warp=cv2.warpPerspective(image,perspective,(400,400)) #if the album is at an angle then this will try and get it as if we were looking directly on top
+                                return warp
+        
+        
 def crop(image, coords):
         pass
         pts=np.float32([[0,0],[800,0],[800,800],[0,800]])  #map to 800*800 target window
@@ -94,31 +81,41 @@ def crop(image, coords):
         dst=cv2.warpPerspective(image,op,(800,800))
         cv2.imshow("final", dst)
 
-def decodeBase64(filePath):
-        
-        with open(filePath, "rb") as bruh:
+def decodeBase64(filePath):     #I used this for debugging keeping it here incase its needed
+        with open(filePath, "rb") as bruh:      #decoding from a URL safe base64 string from a txt file
             im = bruh.read()
-        im = fromBase64(st3[2:-1])
-        retval, buffer = cv2.imencode('.jpg', im)
+        im = fromBase64(st3[2:-1])      #For whatever reason some extra characters get added during string encoding which is REQUIRED for any encoding or decoding so
+                                        #these additional characters are always an additional " at the end and another b' at the start so be gone chars
+        retval, buffer = cv2.imencode('.jpg', im)       #encoding the decoded base64 string as a jpg image 
         cv2.imshow("hellppp", buffer)
         
+
+
          
 def findAlbum(b64String_in):
+        #with open("12.jpg", "rb") as imageFile:
+        #        st = base64.urlsafe_b64encode(imageFile.read())
+        
         #then converting it back to a regular image, this will all be replaced when integrated with the web api
         img = fromBase64(b64String_in)
         image= img
-        #image = scale(image, 20) #scaling the image
-        #scaled = image
+        #image = scale(image, 20) #scaling the image, but this is no longer required as the application will scale to reduce bandwidth needs and server processing
+
         processed = imageProc(image) #applying image processing techniques
-        image = contours(image,processed)
-        #if len(image) == 0:
-        #        return "Failed"
-        #else:
-        retval, buffer = cv2.imencode('.jpg', image)
-        b64String_out = str(base64.urlsafe_b64encode(buffer))
-        return b64String_out
-
-
+        image = contours(image,processed) #finding the contours and convexhull to find the album cover, then it gets cropped
+        
+        b64String_out = None    #if the album is not found it will default to None
+        
+        try:
+                retval, buffer = cv2.imencode('.jpg', image) #encoding the image as a jpg
+                b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
+                #return b64String_out #found album returned
+        except:
+                print("No album found")
+        else:
+                return b64String_out
+        
+        
         
 
 

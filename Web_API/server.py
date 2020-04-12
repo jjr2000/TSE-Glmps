@@ -15,22 +15,19 @@ api = Api(app)
 
 @app.route('/')
 
-def index():
-    return "hello welcome to GLIMPS, don't poke around here to much\n might crash"
+def index(): #Default index of the website
+    return "hello welcome to GLIMPS, don't poke around here too much, it might crash :/"
 
 
 
-class imageSend(Resource):
-    def get(self, string):
-        #print(type(string), file=sys.stderr)
-        #pls = string.encode("utf-8")
-        string = bytearray(string, 'utf-8')
-        foundAlbum = ipw.findAlbum(string[2:-1])
-        #print(foundAlbum[:10])
-        return {"image" : foundAlbum}
+class imageSend(Resource): #function call for the /imageSend/ url
+    def get(self, string): #this is a get request
+        string = bytearray(string, 'utf-8') #encoding the base64 string as utf-8 then turning it into a byte array so it can be decoded and encoded as a jpg correctly
+        foundAlbum = ipw.findAlbum(string[2:-1]) #the encoding adds some additional characters to the front and back of the array, this removes them
+        return {"image" : foundAlbum} #URL safe base64 string is returned in JSON
 
 
-api.add_resource(imageSend, '/imageSend/<string>')
+api.add_resource(imageSend, '/imageSend/<string>') #adding this function to the API
 
 if __name__ == '__main__':
     app.run(debug=True)
