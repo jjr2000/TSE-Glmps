@@ -109,7 +109,6 @@ def findAlbum(b64String_in):
         try:
                 retval, buffer = cv2.imencode('.jpg', image) #encoding the image as a jpg
                 b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
-                #return b64String_out #found album returned
         except:
                 print("No album found")
         else:
