@@ -111,7 +111,6 @@ def findAlbum(b64String_in):
                 b64String_out = gc.detect_web(bufferString)
                 #log.write(f'b64String_out:{b64String_out}')
                 #b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
-                #return b64String_out #found album returned
         except:
                 return null
         else:
