@@ -4,9 +4,9 @@ import base64
 import log
 import io
 from PIL import Image
-newsize = (380, 806)
+newsize = (381, 806)
 
-image_file = Image.open("Image_Processor/1.jpg")  
+image_file = Image.open("Image_Processor/2.jpg")  
 image_file = image_file.resize(newsize)
 imgByteArr = io.BytesIO()
 image_file.save(imgByteArr, format='JPEG')
