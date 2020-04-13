@@ -1,3 +1,5 @@
+import log
+
 def detect_web(imageBase):
     """Detects web annotations given an image."""
     from google.cloud import vision
@@ -5,14 +7,22 @@ def detect_web(imageBase):
     import base64
     client = vision.ImageAnnotatorClient()
 
+    #imageBaseAsBytes = base64.b64decode(imageBase)
+    #log.write(f'imageBase: {imageBase}')
     imageBaseAsBytes = base64.b64decode(imageBase)
-
+    #log.write(f'imageBaseAsBytes: {imageBaseAsBytes}')
     image = vision.types.Image(content=imageBaseAsBytes)
-
+    #log.write('image Loaded')
     response = client.web_detection(image=image)
+    #log.write('response Loaded')
+    #log.write('Response:/n{response}')
     annotations = response.web_detection
 
-    return annotations
+    if annotations.best_guess_labels:
+        for label in annotations.best_guess_labels:
+            return label.label
+
+    return null
 
 """    if annotations.best_guess_labels:
         for label in annotations.best_guess_labels:

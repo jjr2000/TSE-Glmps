@@ -6,21 +6,17 @@ from PIL import Image
 import mapper
 import imutils
 import sys
+import googleCloud as gc
+import log
 
 from flask import Flask
 from flask_restful import Resource, Api
 
 
 def fromBase64(base64Data): #For converting a URL base64 string into a opencv image
-        #print(base64Data[:10])
-        #base64Data = base64.urlsafe_b64encode(base64Data)
-
-        file1 = open("post.txt", "w")
-        file2 = open("after.txt","w")
-        file1.write(str(base64Data))
-        decodedData = base64.urlsafe_b64decode(base64Data) #Decoding
-        file2.write(str(decodedData))
-        data = np.fromstring(decodedData,np.uint8) #Formatting into a numpy array which opencv can work with
+        binary = base64.b64decode(base64Data)
+        data = np.asarray(bytearray(binary), dtype="uint8")
+        #log.write(f'data:{data}')
         image = cv2.imdecode(data,cv2.COLOR_RGB2BGR) #Opencv encoding the aray into a RGB colour image 
         return image
 
@@ -98,20 +94,26 @@ def findAlbum(b64String_in):
         
         #then converting it back to a regular image, this will all be replaced when integrated with the web api
         img = fromBase64(b64String_in)
+        #cv2.imwrite('imgBase.jpeg', img)
         image= img
         #image = scale(image, 20) #scaling the image, but this is no longer required as the application will scale to reduce bandwidth needs and server processing
 
         processed = imageProc(image) #applying image processing techniques
+        #cv2.imwrite('processed.jpeg', processed)
         image = contours(image,processed) #finding the contours and convexhull to find the album cover, then it gets cropped
-        
         b64String_out = None    #if the album is not found it will default to None
-        
+        #cv2.imwrite('image.jpeg', image)
+        #log.write(f'pre Try:{image}')
         try:
                 retval, buffer = cv2.imencode('.jpg', image) #encoding the image as a jpg
-                b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
+                #log.write(f'buffer:{buffer}')
+                bufferString = base64.b64encode(buffer)
+                b64String_out = gc.detect_web(bufferString)
+                #log.write(f'b64String_out:{b64String_out}')
+                #b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
                 #return b64String_out #found album returned
         except:
-                print("No album found")
+                return null
         else:
                 return b64String_out
         
