@@ -15,7 +15,7 @@ def detect_web(imageBase):
     #log.write('image Loaded')
     response = client.web_detection(image=image)
     #log.write('response Loaded')
-    #log.write('Response:/n{response}')
+    log.write(f'Response:/n{response}')
     annotations = response.web_detection
 
     if annotations.best_guess_labels:

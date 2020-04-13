@@ -6,10 +6,12 @@ import io
 from PIL import Image
 newsize = (806, 381)
 
-image_file = Image.open("Image_Processor/2.jpg")  
-image_file = image_file.resize(newsize)
+image_file = Image.open("Image_Processor/4.jpg")  
+im = image_file.resize(newsize)
+angle = 270
+out = im.rotate(angle, expand=True)
 imgByteArr = io.BytesIO()
-image_file.save(imgByteArr, format='JPEG')
+out.save(imgByteArr, format='JPEG')
 imgByteArr = imgByteArr.getvalue()
 base64string = str(base64.b64encode(imgByteArr))[2:-1]
 

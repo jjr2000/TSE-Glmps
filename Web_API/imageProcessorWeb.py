@@ -102,7 +102,7 @@ def findAlbum(b64String_in):
         #cv2.imwrite('processed.jpeg', processed)
         image = contours(image,processed) #finding the contours and convexhull to find the album cover, then it gets cropped
         b64String_out = None    #if the album is not found it will default to None
-        #cv2.imwrite('image.jpeg', image)
+        cv2.imwrite('image.jpeg', image)
         #log.write(f'pre Try:{image}')
         try:
                 retval, buffer = cv2.imencode('.jpg', image) #encoding the image as a jpg
