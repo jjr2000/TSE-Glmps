@@ -112,7 +112,7 @@ def findAlbum(b64String_in):
                 #log.write(f'b64String_out:{b64String_out}')
                 #b64String_out = str(base64.urlsafe_b64encode(buffer)) #then encoding the image and converting it to a string so the server can return it with json
         except:
-                return null
+                return b64String_out
         else:
                 return b64String_out
         
