@@ -28,7 +28,7 @@ def detect_web(imageBase):
     except Exception as err:
         log.write(err)
 
-    return null
+    return None
 
 """    if annotations.best_guess_labels:
         for label in annotations.best_guess_labels:
