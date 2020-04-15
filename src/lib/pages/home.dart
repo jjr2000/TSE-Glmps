@@ -1,14 +1,31 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
+import 'package:image/image.dart' as img;
+
+import 'package:path/path.dart';
+import 'package:uipage/pages/library.dart';
 
 class Home extends StatefulWidget {
+  final List<CameraDescription> cameras;
+
+  const Home({
+    Key key,
+    @required this.cameras,
+  }) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  CameraController _controller;
+  Future<void> _initializeControllerFuture;
+  File _image;
 
   double  _widthLib = 20;
   double _heightLib = 20;
@@ -42,22 +59,28 @@ class _HomeState extends State<Home> {
     });
   }
 
-  File _image;
-
-  void open_camera()
-  async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
-      _image = image;
-    });
-  }
-
-  void open_gallery()
-  async{
+  void open_gallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
+      // Open confirmation
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // To display the current output from the Camera,
+    // create a CameraController.
+    _controller = CameraController(
+      // Get a specific camera from the list of available cameras.
+      widget.cameras.first,
+      // Define the resolution to use.
+      ResolutionPreset.medium,
+    );
+
+    // Next, initialize the controller. This returns a Future.
+    _initializeControllerFuture = _controller.initialize();
   }
 
   @override
@@ -108,33 +131,126 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-
       backgroundColor: Colors.grey[900],
-      body: Center(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              Divider(
-                height: 0,
-                color: Colors.grey[800],
-              ),
-              Expanded(child: Container(child: _image == null ? Text("image holder") : Image.file(_image),)),
-              
-              FlatButton(
-                child:
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/camerabutton.png'),
+      body: FutureBuilder<void>(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If the Future is complete, display the preview.
+            return Stack(
+              children: <Widget>[
+                CameraPreview(_controller),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    child: FractionallySizedBox(
+                      widthFactor: 0.8,
+                      heightFactor: (MediaQuery.of(context).size.width / MediaQuery.of(context).size.height) * 0.9,
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Color.fromARGB(50, 255, 255, 255),
+                            width: 10
+                        )
+                    ),
+                  ),
                 ),
-
-                onPressed: (){
-                  open_camera();
-                },
-              ),
-            ],
-          ),
-        ),
+              ],
+            );
+          } else {
+            // Otherwise, display a loading indicator.
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.transparent,
+        child: CircleAvatar (
+          backgroundImage: AssetImage('assets/camerabutton.png'),
+        ),
+        onPressed: () async {
+          // Take the Picture in a try / catch block. If anything goes wrong,
+          // catch the error.
+          try {
+            // Ensure that the camera is initialized.
+            await _initializeControllerFuture;
+            // Construct the path where the image should be saved using the
+            // pattern package.
+            final path = join (
+              // Store the picture in the temp directory.
+              // Find the temp directory using the `path_provider` plugin.
+              (await getTemporaryDirectory()).path,
+              '${DateTime.now()}.png',
+            );
+            // Attempt to take a picture and log where it's been saved.
+            await _controller.takePicture(path);
+            // If the picture was taken, display it on a new screen.
 
+            // Navigator.push(
+            //   context,
+            //  MaterialPageRoute(
+            //     builder: (context) => DisplayPictureScreen(image: _image),
+            //  ),
+            //);
+          } catch (e) {
+            // If an error occurs, log the error to the console.
+            print(e);
+          }
+        },
+      ),
+    );
+  }
+}
+
+// A widget that displays the picture taken by the user.
+class DisplayPictureScreen extends StatelessWidget {
+  final File image;
+
+  const DisplayPictureScreen({Key key, this.image}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Confirm'),
+        centerTitle: true,
+      ),
+      // The image is stored as a file on the device. Use the `Image.file`
+      // constructor with the given path to display the image.
+      body: Row(
+        children: <Widget>[
+          Expanded(
+              child: Image.file(image),
+              flex: 1
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black12,
+        foregroundColor: Colors.white,
+        child: Icon(Icons.check),
+        // Provide an onPressed callback.
+        onPressed: () {
+          // Read data
+          List<int> imageBytes = this.image.readAsBytesSync();
+          // Decode data for processing
+          img.Image image = img.decodeImage(imageBytes);
+          // Rescale image
+          img.Image resized = img.copyResize(image, width: 381);
+          // Encode image data into jpg represented as a base65 url safe string
+          String base = base64UrlEncode(img.encodeJpg(resized));
+          // Pass on to next widget here
+          Navigator.pushNamed(context, '/library');
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Library(),
+              )
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
