@@ -5,22 +5,28 @@ def detect_web(imageBase):
     from google.cloud import vision
     import io
     import base64
-    client = vision.ImageAnnotatorClient()
+    try:
+        log.write('pre client load')
+        client = vision.ImageAnnotatorClient()
+        log.write('client loaded')
+        #imageBaseAsBytes = base64.b64decode(imageBase)
+        #log.write(f'imageBase: {imageBase}')
+        imageBaseAsBytes = base64.b64decode(imageBase)
+        #log.write(f'imageBaseAsBytes: {imageBaseAsBytes}')
+        image = vision.types.Image(content=imageBaseAsBytes)
+        log.write('image element made')
+        #log.write('image Loaded')
+        response = client.web_detection(image=image)
+        #log.write('response Loaded')
+        log.write(f'Response:/n{response}')
+        annotations = response.web_detection
 
-    #imageBaseAsBytes = base64.b64decode(imageBase)
-    #log.write(f'imageBase: {imageBase}')
-    imageBaseAsBytes = base64.b64decode(imageBase)
-    #log.write(f'imageBaseAsBytes: {imageBaseAsBytes}')
-    image = vision.types.Image(content=imageBaseAsBytes)
-    #log.write('image Loaded')
-    response = client.web_detection(image=image)
-    #log.write('response Loaded')
-    log.write(f'Response:/n{response}')
-    annotations = response.web_detection
+        if annotations.best_guess_labels:
+            for label in annotations.best_guess_labels:
+                return label.label
 
-    if annotations.best_guess_labels:
-        for label in annotations.best_guess_labels:
-            return label.label
+    except Exception as err:
+        log.write(err)
 
     return null
 
