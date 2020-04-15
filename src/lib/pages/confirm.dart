@@ -4,6 +4,7 @@ import 'package:image/image.dart' as img;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:web_detect/web_detect.dart';
 
 import 'library.dart';
 
@@ -41,6 +42,10 @@ class _ConfirmState extends State<Confirm> {
           img.Image resized = img.copyResize(image, width: 381);
           // Encode image data into jpg represented as a base65 url safe string
           String base = base64UrlEncode(img.encodeJpg(resized));
+
+          // THE WEB CALLS!!! Show some loading screen while these are running
+          WebDetect webDetectResult = await webDetect(base);
+
           // Pass on to next widget here
           Navigator.pushNamed(context, '/library');
           Navigator.push(
