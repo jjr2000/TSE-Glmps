@@ -5,6 +5,7 @@ import 'package:image/image.dart' as img;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:web_detect/web_detect.dart';
+import 'package:spotify_api/spotify_api.dart';
 
 import 'library.dart';
 
@@ -45,7 +46,17 @@ class _ConfirmState extends State<Confirm> {
 
           // THE WEB CALLS!!! Show some loading screen while these are running
           webDetect(base).then((value) {
-
+            if(value.found) {
+              searchAlbum(value.result).then((value2) {
+                if (value2.found) {
+                  //we got an album BOIS do what you want with the data from here
+                } else {
+                  //Let User know we couldn't find the album
+                }
+              });
+            } else {
+              // Tell the user their image was shit and have them retake it.
+            }
           });
           // Pass on to next widget here
           Navigator.pushNamed(context, '/library');
