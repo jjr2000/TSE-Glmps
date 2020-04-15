@@ -44,7 +44,9 @@ class _ConfirmState extends State<Confirm> {
           String base = base64UrlEncode(img.encodeJpg(resized));
 
           // THE WEB CALLS!!! Show some loading screen while these are running
-          WebDetect webDetectResult = await webDetect(base);
+          webDetect(base).then((value) {
+
+          });
 
           // Pass on to next widget here
           Navigator.pushNamed(context, '/library');
