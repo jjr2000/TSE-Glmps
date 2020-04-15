@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uipage/pages/About.dart';
 import 'package:uipage/pages/home.dart';
 import 'package:uipage/pages/loading.dart';
 import 'package:uipage/pages/library.dart';
@@ -12,5 +13,6 @@ void main() => runApp(MaterialApp(
     '/home': (context) => Home(),
     '/library': (context) => Library(),
     '/links': (context) => Links(),
+    '/about': (context) => About(),
   },
 ));

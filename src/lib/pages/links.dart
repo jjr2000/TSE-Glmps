@@ -1,11 +1,19 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:music_player/music_player.dart';
 
-class Links extends StatelessWidget {
+class Links extends StatefulWidget {
+
   final String art;
   final String title;
   final String artist;
   Links({Key key, @required this.art, this.title, this.artist}) : super(key: key);
 
+  @override
+  _LinksState createState() => _LinksState();
+}
+
+class _LinksState extends State<Links> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,10 +24,10 @@ class Links extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.fromLTRB(50, 50, 50, 10),
-                child: Image.network(art),
+                child: Image.network(widget.art),
               ),
               Text(
-                title,
+                widget.title,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 30,
@@ -28,7 +36,7 @@ class Links extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 5),
-              Text(artist,
+              Text(widget.artist,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -48,6 +56,7 @@ class Links extends StatelessWidget {
                   side: BorderSide(color: Colors.green[600]),
                 ),
               ),
+
             ],
           ),
         ),

@@ -26,6 +26,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   image_picker: ^0.6.5
   path: ^1.6.2
+  url_launcher: ^5.4.2
+  music_player: ^0.1.4
 
 dev_dependencies:
   flutter_test:

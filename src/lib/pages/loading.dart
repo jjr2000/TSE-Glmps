@@ -68,12 +68,23 @@ class _loadingState extends State<Loading> {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-              ),),
+              ),
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(18.0),
                 side: BorderSide(color: Colors.green[600]),
               ),
-            )
+            ),
+            FlatButton(
+              child: Text('About',
+              style: TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline
+              ),),
+              onPressed: () {
+                Navigator.pushNamed(context, '/about');
+              },
+            ),
           ],
         ),
       )
