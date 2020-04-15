@@ -47,7 +47,6 @@ class _ConfirmState extends State<Confirm> {
           webDetect(base).then((value) {
 
           });
-
           // Pass on to next widget here
           Navigator.pushNamed(context, '/library');
           Navigator.push(

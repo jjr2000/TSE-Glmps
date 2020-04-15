@@ -10,6 +10,8 @@ import 'package:image/image.dart' as img;
 import 'package:path/path.dart';
 import 'package:uipage/pages/library.dart';
 
+import 'confirm.dart';
+
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -184,73 +186,23 @@ class _HomeState extends State<Home> {
               '${DateTime.now()}.png',
             );
             // Attempt to take a picture and log where it's been saved.
-            await _controller.takePicture(path);
-            // If the picture was taken, display it on a new screen.
+            await _controller.takePicture(path).then((value) {
+              _image = File(path);
 
-            // Navigator.push(
-            //   context,
-            //  MaterialPageRoute(
-            //     builder: (context) => DisplayPictureScreen(image: _image),
-            //  ),
-            //);
+              Navigator.pushNamed(context, '/confirm');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Confirm(image: _image),
+                ),
+              );
+            });
           } catch (e) {
             // If an error occurs, log the error to the console.
             print(e);
           }
         },
       ),
-    );
-  }
-}
-
-// A widget that displays the picture taken by the user.
-class DisplayPictureScreen extends StatelessWidget {
-  final File image;
-
-  const DisplayPictureScreen({Key key, this.image}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Confirm'),
-        centerTitle: true,
-      ),
-      // The image is stored as a file on the device. Use the `Image.file`
-      // constructor with the given path to display the image.
-      body: Row(
-        children: <Widget>[
-          Expanded(
-              child: Image.file(image),
-              flex: 1
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black12,
-        foregroundColor: Colors.white,
-        child: Icon(Icons.check),
-        // Provide an onPressed callback.
-        onPressed: () {
-          // Read data
-          List<int> imageBytes = this.image.readAsBytesSync();
-          // Decode data for processing
-          img.Image image = img.decodeImage(imageBytes);
-          // Rescale image
-          img.Image resized = img.copyResize(image, width: 381);
-          // Encode image data into jpg represented as a base65 url safe string
-          String base = base64UrlEncode(img.encodeJpg(resized));
-          // Pass on to next widget here
-          Navigator.pushNamed(context, '/library');
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Library(),
-              )
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
