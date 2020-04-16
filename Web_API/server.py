@@ -22,7 +22,7 @@ def index(): #Default index of the website
 class imageSend(Resource): #function call for the /imageSend/ url
     def post(self): #this is a post request
         parser = reqparse.RequestParser()
-        parser.add_argument('image', type=str, location='args')
+        parser.add_argument('image', type=str, location='form')
         args = parser.parse_args()
         img = args['image'].replace(" ", "+")
         #img = bytearray(str(args['image']), 'utf-8')
