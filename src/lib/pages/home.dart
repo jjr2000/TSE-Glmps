@@ -69,6 +69,32 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> takePicture() async {
+    try {
+      // Ensure that the camera is initialized.
+      await _initializeControllerFuture;
+      // Construct the path where the image should be saved using the
+      // pattern package.
+      final path = join (
+        // Store the picture in the temp directory.
+        // Find the temp directory using the `path_provider` plugin.
+        (await getTemporaryDirectory()).path,
+        '${DateTime.now()}.png',
+      );
+      // Attempt to take a picture and log where it's been saved.
+      print("Awating taking picture");
+      await _controller.takePicture(path);
+      print("Setting path: " + path);
+      _image = File(path);
+      print("Set: " + _image.path);
+
+
+    } catch (e) {
+      // If an error occurs, log the error to the console.
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -78,7 +104,8 @@ class _HomeState extends State<Home> {
       // Get a specific camera from the list of available cameras.
       widget.cameras.first,
       // Define the resolution to use.
-      ResolutionPreset.max,
+      ResolutionPreset.medium,
+      enableAudio: false
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -139,29 +166,30 @@ class _HomeState extends State<Home> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return AspectRatio(
-                aspectRatio:
-                _controller.value.aspectRatio,
-                child: Stack(
-                  children: <Widget>[
-                    CameraPreview(_controller),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        child: FractionallySizedBox(
-                          widthFactor: 0.8,
-                          heightFactor: _controller.value.aspectRatio * 0.8,
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Color.fromARGB(50, 255, 255, 255),
-                                width: 10
-                            )
-                        ),
-                      ),
-                    ),
-                  ],
+            return Stack(
+              children: <Widget>[
+                Center(
+                  child: AspectRatio(
+                      aspectRatio: _controller.value.aspectRatio,
+                      child: CameraPreview(_controller)
+                  ),
                 ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    child: FractionallySizedBox(
+                      widthFactor: 0.8,
+                      heightFactor: (MediaQuery.of(context).size.width / MediaQuery.of(context).size.height) * 0.9,
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Color.fromARGB(50, 255, 255, 255),
+                            width: 10
+                        )
+                    ),
+                  ),
+                ),
+              ],
             );
           } else {
             // Otherwise, display a loading indicator.
@@ -171,40 +199,21 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.transparent,
-        child: CircleAvatar (
-          backgroundImage: AssetImage('assets/camerabutton.png'),
-        ),
-        onPressed: () async {
+        backgroundColor: Colors.grey[800],
+        child: Icon(Icons.photo_camera),
+        onPressed: () {
           // Take the Picture in a try / catch block. If anything goes wrong,
           // catch the error.
-          try {
-            // Ensure that the camera is initialized.
-            await _initializeControllerFuture;
-            // Construct the path where the image should be saved using the
-            // pattern package.
-            final path = join (
-              // Store the picture in the temp directory.
-              // Find the temp directory using the `path_provider` plugin.
-              (await getTemporaryDirectory()).path,
-              '${DateTime.now()}.png',
+          takePicture().then((value) {
+            //Navigator.pushNamed(context, '/confirm');
+            print("Then: " + _image.path);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Confirm(image: _image),
+              ),
             );
-            // Attempt to take a picture and log where it's been saved.
-            await _controller.takePicture(path).then((value) {
-              _image = File(path);
-
-              Navigator.pushNamed(context, '/confirm');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Confirm(image: _image),
-                ),
-              );
-            });
-          } catch (e) {
-            // If an error occurs, log the error to the console.
-            print(e);
-          }
+          });
         },
       ),
     );

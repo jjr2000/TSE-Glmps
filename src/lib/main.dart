@@ -17,8 +17,7 @@ Future<void> main() async {
           '/loading': (context) => Loading(),
           '/home': (context) => Home(cameras: cameras),
           '/library': (context) => Library(),
-          '/links': (context) => Links(),
-          '/confirm': (context) => Confirm(),
+          '/links': (context) => Links()
         },
       )
   );
