@@ -27,7 +27,8 @@ dependencies:
   image_picker: ^0.6.5
   path: ^1.6.2
   url_launcher: ^5.4.2
-  music_player: ^0.1.4
+  audioplayers: ^0.15.1
+  random_color: ^1.0.5
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +54,7 @@ flutter:
     - assets/camerabutton.png
     - assets/library.png
     - assets/gallery.png
+    - assets/thecure.mp3
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

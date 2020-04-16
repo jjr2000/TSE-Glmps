@@ -20,7 +20,6 @@ class _AboutState extends State<About> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,15 +43,13 @@ class _AboutState extends State<About> {
                       color: Colors.white,
                       decoration: TextDecoration.underline)),),
                 onPressed: () {
-                  _launchUrl('https://www.google.com/');
+                  _launchUrl('http://51.75.162.158:5000/');
                 },
               ),
             )
           ],
         ),
       ),
-
     );
-
   }
 }
