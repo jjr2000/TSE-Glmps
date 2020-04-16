@@ -171,7 +171,7 @@ class _LinksState extends State<Links> {
     advancedPlayer.stop();
     setState(
             () => _widgetIndex = 0);
-    Navigator.pushNamed(context, '/library');
+    Navigator.pop(context, true);
   }
 
   @override
