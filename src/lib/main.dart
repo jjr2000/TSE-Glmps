@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:uipage/pages/confirm.dart';
+import 'package:uipage/pages/about.dart';
 import 'package:uipage/pages/home.dart';
 import 'package:uipage/pages/loading.dart';
 import 'package:uipage/pages/library.dart';
@@ -17,7 +18,9 @@ Future<void> main() async {
           '/loading': (context) => Loading(),
           '/home': (context) => Home(cameras: cameras),
           '/library': (context) => Library(),
-          '/links': (context) => Links()
+          '/links': (context) => Links(),
+          '/about': (context) => About(),
+          '/confirm': (context) => Confirm(),
         },
       )
   );

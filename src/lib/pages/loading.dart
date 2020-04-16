@@ -8,7 +8,6 @@ class Loading extends StatefulWidget {
 
 class _loadingState extends State<Loading> {
 
-
   double  _width = 200;
   double _height = 100;
 
@@ -23,9 +22,9 @@ class _loadingState extends State<Loading> {
         _height = 100;
       });
       Future.delayed(Duration(seconds: 2), () {
-          _enlarge();
-        });
+        _enlarge();
       });
+    });
   }
 
   /*
@@ -47,37 +46,48 @@ class _loadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              curve: Curves.bounceOut,
-              width: _width,
-              height: _height,
-              color: Colors.grey[900],
-              child: Image.asset('assets/GLMPS.png'),
-            ),
-            FlatButton(
-              onPressed: (){
-                Navigator.pushNamed(context, '/home');
-              },
-              color: Colors.green[600],
-              child: Text('Start Scanning',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),),
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(18.0),
-                side: BorderSide(color: Colors.green[600]),
+        backgroundColor: Colors.grey[900],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.bounceOut,
+                width: _width,
+                height: _height,
+                color: Colors.grey[900],
+                child: Image.asset('assets/GLMPS.png'),
               ),
-            )
-          ],
-        ),
-      )
+              FlatButton(
+                onPressed: (){
+                  Navigator.pushNamed(context, '/home');
+                },
+                color: Colors.green[600],
+                child: Text('Start Scanning',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(18.0),
+                  side: BorderSide(color: Colors.green[600]),
+                ),
+              ),
+              FlatButton(
+                child: Text('About',
+                  style: TextStyle(
+                      color: Colors.white,
+                      decoration: TextDecoration.underline
+                  ),),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/about');
+                },
+              ),
+            ],
+          ),
+        )
 
     );
   }
