@@ -44,7 +44,6 @@ class _LibraryState extends State<Library> {
                 color: Colors.grey[850],
                 child: ListTile(
                   onTap: () {
-                    Navigator.pushNamed(context, '/links');
                     Navigator.push(
                         context,
                         MaterialPageRoute(
