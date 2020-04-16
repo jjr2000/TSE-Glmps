@@ -8,15 +8,13 @@ String _apiUrl = 'http://51.75.162.158:5000/';
 
 Future<bool> _webDetect(WebDetect webDetect) async {
   bool success = false;
+
   try {
     var response = await http.post(
         '${_apiUrl}imageSend',
         headers: {
         },
-        body: {
-          // This is a server authorization grant type that doesn't require user login.
-          'image': webDetect.base64
-        }
+        body: {'image':webDetect.base64}
     );
 
     if (response.statusCode == 200) {
@@ -28,6 +26,7 @@ Future<bool> _webDetect(WebDetect webDetect) async {
       success = true;
     } else {
       print('something went wrong, status code: ${response.statusCode.toString()}');
+      print(response.body);
     }
   } catch (error) {
     print('An error occured 1');

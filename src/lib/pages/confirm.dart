@@ -68,7 +68,7 @@ class _ConfirmState extends State<Confirm> {
           // Rescale image
           img.Image resized = img.copyResize(image, width: 381);
           // Encode image data into jpg represented as a base65 url safe string
-          String base = base64UrlEncode(img.encodeJpg(resized));
+          String base = base64Encode(img.encodeJpg(resized));
 
           // THE WEB CALLS!!! Show some loading screen while these are running
           webDetect(base).then((value) {
