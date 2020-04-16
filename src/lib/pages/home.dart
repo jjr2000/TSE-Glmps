@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
       // Get a specific camera from the list of available cameras.
       widget.cameras.first,
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.max,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -139,25 +139,29 @@ class _HomeState extends State<Home> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return Stack(
-              children: <Widget>[
-                CameraPreview(_controller),
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    child: FractionallySizedBox(
-                      widthFactor: 0.8,
-                      heightFactor: (MediaQuery.of(context).size.width / MediaQuery.of(context).size.height) * 0.9,
+            return AspectRatio(
+                aspectRatio:
+                _controller.value.aspectRatio,
+                child: Stack(
+                  children: <Widget>[
+                    CameraPreview(_controller),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        child: FractionallySizedBox(
+                          widthFactor: 0.8,
+                          heightFactor: _controller.value.aspectRatio * 0.8,
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Color.fromARGB(50, 255, 255, 255),
+                                width: 10
+                            )
+                        ),
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromARGB(50, 255, 255, 255),
-                            width: 10
-                        )
-                    ),
-                  ),
+                  ],
                 ),
-              ],
             );
           } else {
             // Otherwise, display a loading indicator.
