@@ -66,7 +66,7 @@ class _ConfirmState extends State<Confirm> {
           // Encode image data into jpg represented as a base65 url safe string
           String base = base64Encode(img.encodeJpg(resized));
 
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => WebRequestLoading(base: base),

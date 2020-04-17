@@ -30,8 +30,7 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
           if (value2.found) {
             //we got an album BOIS do what you want with the data from here
             // Pass on to next widget here
-            Navigator.pushNamed(context, '/library');
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Library(),
@@ -40,13 +39,44 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
           } else {
             //Let User know we couldn't find the album
             error = "Album not found";
+            Navigator.pop(context);
+            _neverSatisfied();
           }
         });
       } else {
         // Tell the user their image was shit and have them retake it.
-        error = "Detection error please check lighting and ensure the record fully visible.";
+        error = "Detection error please check lighting and ensure the record is fully visible.";
+        Navigator.pop(context);
+        _neverSatisfied();
       }
     });
+  }
+
+  Future<void> _neverSatisfied() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alert!'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(error),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
