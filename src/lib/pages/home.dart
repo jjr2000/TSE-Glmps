@@ -119,45 +119,52 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false,
         elevation: 0.00,
         backgroundColor: Colors.grey[900],
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              child: FlatButton(
-                  child: AnimatedContainer(
-                      child: Image.asset('assets/library.png',),
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
-                        width: _heightLib,
-                        height: _heightLib,
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    child: FlatButton(
+                        child: AnimatedContainer(
+                            child: Image.asset('assets/library.png',),
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeIn,
+                              width: _heightLib,
+                              height: _heightLib,
 
+                        ),
+                        onPressed: (){
+                          Navigator.pushNamed(context, '/library');
+                          _library();
+                        },
+                      ),
                   ),
-                  onPressed: (){
-                    Navigator.pushNamed(context, '/library');
-                    _library();
-                  },
-                ),
-            ),
-            Container(
-              child: Image.asset('assets/GLMPS.png', width: 80, height: 80,),
-            ),
-            Container(
-              child: FlatButton(
-                child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                    width: _widthGal,
-                    height: _heightGal,
+                  Container(
+                    child: Image.asset('assets/GLMPS.png', width: 80, height: 80,),
+                  ),
+                  Container(
+                    child: FlatButton(
+                      child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          width: _widthGal,
+                          height: _heightGal,
 
-                    child: Image.asset('assets/gallery.png',)
-                ),
-                onPressed: (){
-                  open_gallery();
-                  _gallery();
-                },
+                          child: Image.asset('assets/gallery.png',)
+                      ),
+                      onPressed: (){
+                        open_gallery();
+                        _gallery();
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       backgroundColor: Colors.grey[900],
