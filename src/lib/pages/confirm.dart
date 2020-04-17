@@ -8,6 +8,7 @@ import 'package:web_detect/web_detect.dart';
 import 'package:spotify_api/spotify_api.dart';
 
 import 'library.dart';
+import 'loading.dart';
 
 class Confirm extends StatefulWidget {
   final File image;
@@ -19,11 +20,6 @@ class Confirm extends StatefulWidget {
 }
 
 class _ConfirmState extends State<Confirm> {
-  @override
-  void initState() {
-    print(widget.image);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,31 +66,17 @@ class _ConfirmState extends State<Confirm> {
           // Encode image data into jpg represented as a base65 url safe string
           String base = base64Encode(img.encodeJpg(resized));
 
-          // THE WEB CALLS!!! Show some loading screen while these are running
-          webDetect(base).then((value) {
-            if(value.found) {
-              searchAlbum(value.result).then((value2) {
-                if (value2.found) {
-                  //we got an album BOIS do what you want with the data from here
-                  // Pass on to next widget here
-                  Navigator.pushNamed(context, '/library');
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Library(),
-                      )
-                  );
-                } else {
-                  //Let User know we couldn't find the album
-                }
-              });
-            } else {
-              // Tell the user their image was shit and have them retake it.
-            }
-          });
-
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WebRequestLoading(base: base),
+            )
+          );
         },
       ),
     );
   }
 }
+
+
+
