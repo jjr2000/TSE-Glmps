@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:uipage/pages/landing.dart';
 import 'pages/confirm.dart';
 import 'pages/about.dart';
 import 'pages/home.dart';
@@ -13,14 +14,13 @@ Future<void> main() async {
 
   runApp(
       MaterialApp(
-        initialRoute: '/loading',
+        initialRoute: '/landing',
         routes: {
-          '/loading': (context) => Loading(),
+          '/landing': (context) => Landing(),
           '/home': (context) => Home(cameras: cameras),
           '/library': (context) => Library(),
           '/links': (context) => Links(),
-          '/about': (context) => About(),
-          '/confirm': (context) => Confirm(),
+          '/about': (context) => About()
         },
       )
   );

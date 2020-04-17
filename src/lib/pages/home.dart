@@ -70,6 +70,8 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> takePicture() async {
+    // Take the Picture in a try / catch block. If anything goes wrong,
+    // catch the error.
     try {
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
@@ -82,13 +84,8 @@ class _HomeState extends State<Home> {
         '${DateTime.now()}.png',
       );
       // Attempt to take a picture and log where it's been saved.
-      print("Awating taking picture");
       await _controller.takePicture(path);
-      print("Setting path: " + path);
       _image = File(path);
-      print("Set: " + _image.path);
-
-
     } catch (e) {
       // If an error occurs, log the error to the console.
       print(e);
@@ -209,11 +206,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.grey[800],
         child: Icon(Icons.photo_camera),
         onPressed: () {
-          // Take the Picture in a try / catch block. If anything goes wrong,
-          // catch the error.
           takePicture().then((value) {
-            //Navigator.pushNamed(context, '/confirm');
-            print("Then: " + _image.path);
             Navigator.push(
               context,
               MaterialPageRoute(
