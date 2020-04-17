@@ -1,11 +1,11 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:uipage/pages/confirm.dart';
-import 'package:uipage/pages/about.dart';
-import 'package:uipage/pages/home.dart';
-import 'package:uipage/pages/loading.dart';
-import 'package:uipage/pages/library.dart';
-import 'package:uipage/pages/links.dart';
+import 'pages/confirm.dart';
+import 'pages/about.dart';
+import 'pages/home.dart';
+import 'pages/loading.dart';
+import 'pages/library.dart';
+import 'pages/links.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

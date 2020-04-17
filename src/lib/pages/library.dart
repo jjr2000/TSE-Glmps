@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import  'Albums.dart';
+import 'albums.dart';
 import 'links.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
