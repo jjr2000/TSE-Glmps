@@ -130,7 +130,7 @@ class _HomeState extends State<Home> {
                               duration: Duration(milliseconds: 300),
                               curve: Curves.easeIn,
                               width: _heightLib,
-                              height: _heightLib,
+                              height: _widthLib,
 
                         ),
                         onPressed: (){
