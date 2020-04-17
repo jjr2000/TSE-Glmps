@@ -7,13 +7,19 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:random_color/random_color.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+const Url1 = 'https://luan.xyz/files/audio/ambient_c_motion.mp3';
+
 class Links extends StatefulWidget {
+
 
   final String art;
   final String title;
   final String artist;
+  final String song;
+  final String songName;
+  final String spotifyLink;
 
-  Links({Key key, @required this.art, this.title, this.artist}) : super(key: key);
+  Links({Key key, @required this.art, this.title, this.artist, this.song, this.songName, this.spotifyLink}) : super(key: key);
 
   @override
   _LinksState createState() => _LinksState();
@@ -119,7 +125,7 @@ class _LinksState extends State<Links> {
                     size: 40,
                   ),
                   onPressed: (){
-                    audioCache.play('test.mp3');
+                    advancedPlayer.play(widget.song);
                     setState(
                             () => _widgetIndex = 1);
                   },
@@ -139,7 +145,7 @@ class _LinksState extends State<Links> {
               ],
             ),
             slider(),
-            Text('Sample Track Title',
+            Text(widget.songName,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -177,7 +183,7 @@ class _LinksState extends State<Links> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: _onBackPressed,
+      onWillPop: _onBackPressed,
       child: DefaultTabController(
         length: 1,
         child: Scaffold(
@@ -203,6 +209,7 @@ class _LinksState extends State<Links> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),),
+
                           SizedBox(height: 5,),
                           Text(widget.artist,
                             style: TextStyle(
@@ -217,7 +224,8 @@ class _LinksState extends State<Links> {
                   ),
                   FlatButton(
                     onPressed: () {
-                      _launchUrl('https://www.spotify.com/uk/');
+                      _launchUrl(widget.spotifyLink);
+                      print(widget.spotifyLink);
                     },
                     color: Colors.green,
                     child: Padding(
