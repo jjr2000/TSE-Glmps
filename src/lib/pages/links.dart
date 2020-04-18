@@ -109,6 +109,7 @@ class _LinksState extends State<Links> {
   }
 
   int _widgetIndex = 0;
+  String _playerSongName = '--';
 
   Widget localAudio(){
     return _tab([
@@ -145,7 +146,8 @@ class _LinksState extends State<Links> {
               ],
             ),
             slider(),
-            Text(widget.songName,
+            SizedBox(height: 10,),
+            Text(_playerSongName,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -190,56 +192,97 @@ class _LinksState extends State<Links> {
           backgroundColor: Colors.grey[900],
           body: TabBarView(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Card(
-                      color: _color,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Image.network(widget.art),
-                          ),
-                          Text(widget.title,
-                            style: TextStyle(
-                              fontSize: 30,
-                              letterSpacing: 1.0,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),),
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Card(
+                        color: _color,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Image.network(widget.art),
+                            ),
+                            Text(widget.title,
+                              style: TextStyle(
+                                fontSize: 30,
+                                letterSpacing: 1.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),),
 
-                          SizedBox(height: 5,),
-                          Text(widget.artist,
-                            style: TextStyle(
-                              fontSize: 15,
-                              letterSpacing: 1.0,
-                              color: Colors.white,
-                            ),),
-                          SizedBox(height: 20,),
-                        ],
+                            SizedBox(height: 5,),
+                            Text(widget.artist,
+                              style: TextStyle(
+                                fontSize: 15,
+                                letterSpacing: 1.0,
+                                color: Colors.white,
+                              ),),
+                            SizedBox(height: 20,),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      _launchUrl(widget.spotifyLink);
-                      print(widget.spotifyLink);
-                    },
-                    color: Colors.green,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20,0,20,0),
-                      child: Text('Open In Spotify',
-                        style: TextStyle(color: Colors.white),),
+                    FlatButton(
+                      onPressed: () {
+                        _launchUrl(widget.spotifyLink);
+                        print(widget.spotifyLink);
+                      },
+                      color: Colors.green,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20,0,20,0),
+                        child: Text('Open In Spotify',
+                          style: TextStyle(color: Colors.white),),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18),
+                        side: BorderSide(color: Colors.green[600]),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(18),
-                      side: BorderSide(color: Colors.green[600]),
+                    localAudio(),
+                    SizedBox(height: 10,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Divider(
+                        height: 5,
+                        color: Colors.grey[800],
+                      ),
                     ),
-                  ),
-                  localAudio(),
-                ],
+                    Container(
+                      width: 400,
+                      height: 350,
+                      child: ListView.builder(
+                        itemCount: 20,
+                        itemBuilder: (context, index){
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: .0),
+                            child: Card(
+                              color: Colors.grey[850],
+                              child: ListTile(
+                                onTap: () {
+                                  advancedPlayer.stop();
+                                  setState(() => _playerSongName = 'testing'); //set this to title.index
+                                  advancedPlayer.play('url'); // <-- URL HERE
+                                  setState(() => _widgetIndex = 1);
+                                },
+                                title: Text('TITLE HERE',
+                                style: TextStyle(color: Colors.white,
+                                ),),
+                                leading: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Image.network(widget.art), //<-- Please give each track an index number so I can place it here
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10,)
+                  ],
+                ),
               ),
             ],
           ),
