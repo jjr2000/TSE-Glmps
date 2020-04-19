@@ -6,20 +6,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:random_color/random_color.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-const Url1 = 'https://luan.xyz/files/audio/ambient_c_motion.mp3';
+import 'package:spotify_api/spotify_api.dart';
 
 class Links extends StatefulWidget {
 
 
-  final String art;
-  final String title;
-  final String artist;
-  final String song;
-  final String songName;
-  final String spotifyLink;
+  final SpotifyAlbum album;
 
-  Links({Key key, @required this.art, this.title, this.artist, this.song, this.songName, this.spotifyLink}) : super(key: key);
+  Links({Key key, @required this.album}) : super(key: key);
 
   @override
   _LinksState createState() => _LinksState();
@@ -110,6 +104,7 @@ class _LinksState extends State<Links> {
 
   int _widgetIndex = 0;
   String _playerSongName = '--';
+  String _url;
 
   Widget localAudio(){
     return _tab([
@@ -126,7 +121,7 @@ class _LinksState extends State<Links> {
                     size: 40,
                   ),
                   onPressed: (){
-                    advancedPlayer.play(widget.song);
+                    advancedPlayer.play(_url);
                     setState(
                             () => _widgetIndex = 1);
                   },
@@ -203,9 +198,9 @@ class _LinksState extends State<Links> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Image.network(widget.art),
+                              child: Image.network(widget.album.imageUrl),
                             ),
-                            Text(widget.title,
+                            Text(widget.album.title,
                               style: TextStyle(
                                 fontSize: 30,
                                 letterSpacing: 1.0,
@@ -214,7 +209,7 @@ class _LinksState extends State<Links> {
                               ),),
 
                             SizedBox(height: 5,),
-                            Text(widget.artist,
+                            Text(widget.album.artists,
                               style: TextStyle(
                                 fontSize: 15,
                                 letterSpacing: 1.0,
@@ -227,8 +222,7 @@ class _LinksState extends State<Links> {
                     ),
                     FlatButton(
                       onPressed: () {
-                        _launchUrl(widget.spotifyLink);
-                        print(widget.spotifyLink);
+                        _launchUrl('https://open.spotify.com/album/${widget.album.id}');
                       },
                       color: Colors.green,
                       child: Padding(
@@ -254,8 +248,9 @@ class _LinksState extends State<Links> {
                       width: 400,
                       height: 350,
                       child: ListView.builder(
-                        itemCount: 20,
+                        itemCount: widget.album.tracks.length,
                         itemBuilder: (context, index){
+                          SpotifyTrack track = widget.album.tracks[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: .0),
                             child: Card(
@@ -263,16 +258,17 @@ class _LinksState extends State<Links> {
                               child: ListTile(
                                 onTap: () {
                                   advancedPlayer.stop();
-                                  setState(() => _playerSongName = 'testing'); //set this to title.index
-                                  advancedPlayer.play('url'); // <-- URL HERE
+                                  setState(() => _playerSongName = track.title); //set this to title.index
+                                  if(track.previewUrl != null)
+                                    advancedPlayer.play(track.previewUrl); // <-- URL HERE
                                   setState(() => _widgetIndex = 1);
                                 },
-                                title: Text('TITLE HERE',
+                                title: Text(track.title,
                                 style: TextStyle(color: Colors.white,
                                 ),),
                                 leading: Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Image.network(widget.art), //<-- Please give each track an index number so I can place it here
+                                  child: Image.network(widget.album.imageUrl), //<-- Please give each track an index number so I can place it here
                                 ),
                               ),
                             ),
