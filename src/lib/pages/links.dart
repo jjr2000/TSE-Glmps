@@ -252,7 +252,17 @@ class _LinksState extends State<Links> {
                         side: BorderSide(color: Colors.green[600]),
                       ),
                     ),
-                    localAudio(),
+                    Offstage(
+                      offstage: widget._url == null,
+                      child: localAudio()
+                    ),
+                    Offstage(
+                        offstage: widget._url != null,
+                        child: Text('No preview available.',
+                            style: TextStyle(color: Colors.white,
+                            )
+                        )
+                    ),
                     SizedBox(height: 10,),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
