@@ -217,14 +217,17 @@ class _LinksState extends State<Links> {
                             ),
 
                             SizedBox(height: 5,),
-                            Text(widget.album.artists,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(widget.album.artists,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
 
-                                fontSize: 15,
-                                letterSpacing: 1.0,
-                                color: Colors.white,
-                              ),),
+                                  fontSize: 15,
+                                  letterSpacing: 1.0,
+                                  color: Colors.white,
+                                ),),
+                            ),
                             SizedBox(height: 20,),
                           ],
                         ),
