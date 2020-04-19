@@ -77,6 +77,20 @@ create table track (
     return null;
   }
 
+  Future<List<SpotifyAlbum>> getAlbums() async {
+    await open();
+    List<SpotifyAlbum> albums;
+
+    List<Map> dbAlbums = await db.query('album',
+        columns: ['id', 'artists', 'title', 'imageUrl', 'releaseDatePrecision', 'releaseDate', 'dbId']);
+      for (int i = 0; i < dbAlbums.length; i++) {
+        albums.add(SpotifyAlbum.fromMap(dbAlbums[i]));
+      }
+      db.close();
+
+      return albums;
+  }
+
   Future<int> delete(int dbId) async {
     await open();
     int recordsDeleted = 0;
