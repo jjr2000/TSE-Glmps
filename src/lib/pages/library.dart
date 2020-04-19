@@ -44,28 +44,10 @@ class _LibraryState extends State<Library> {
                     });
                   },
                   title: Container(
-                    child: Row(
-                      children: <Widget>[
-                      Expanded(
-                        child: Text(album.title,
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),),
+                    child: Text(album.title,
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
-                        Container(
-                          child: IconButton(
-                            icon: Icon(Icons.delete_forever),
-                            color: Colors.white,
-                            onPressed: () {
-                              DbProvider().delete(album.dbId).then((value){
-                                setState(() {
-                                  widget.albums.removeAt(index);
-                                });
-                              });
-                            },
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                   subtitle: Text(album.artists,
@@ -75,6 +57,17 @@ class _LibraryState extends State<Library> {
                     ),
                   ),
                   leading: Image.network(album.imageUrl),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete_forever),
+                    color: Colors.white,
+                    onPressed: () {
+                      DbProvider().delete(album.dbId).then((value){
+                        setState(() {
+                          widget.albums.removeAt(index);
+                        });
+                      });
+                    },
+                  ),
                 ),
               ),
             );
