@@ -15,6 +15,9 @@ class Links extends StatefulWidget {
 
   Links({Key key, @required this.album}) : super(key: key);
 
+  String _playerSongName = '--';
+  String _url;
+
   @override
   _LinksState createState() => _LinksState();
 }
@@ -35,7 +38,9 @@ class _LinksState extends State<Links> {
   void initState() {
     super.initState();
     _color = _randomColor.randomColor(colorBrightness: ColorBrightness.light);
-
+    widget._playerSongName = widget.album.tracks[0].title;
+    widget._url = widget.album.tracks[0].previewUrl;
+    
     initPlayer();
   }
 
@@ -103,8 +108,7 @@ class _LinksState extends State<Links> {
   }
 
   int _widgetIndex = 0;
-  String _playerSongName = '--';
-  String _url;
+
 
   Widget localAudio(){
     return _tab([
@@ -121,7 +125,7 @@ class _LinksState extends State<Links> {
                     size: 40,
                   ),
                   onPressed: (){
-                    advancedPlayer.play(_url);
+                    advancedPlayer.play(widget._url);
                     setState(
                             () => _widgetIndex = 1);
                   },
@@ -142,7 +146,7 @@ class _LinksState extends State<Links> {
             ),
             slider(),
             SizedBox(height: 10,),
-            Text(_playerSongName,
+            Text(widget._playerSongName,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -268,11 +272,11 @@ class _LinksState extends State<Links> {
                               child: ListTile(
                                 onTap: () {
                                   advancedPlayer.stop();
-                                  setState(() => _playerSongName = track.title); //set this to title.index
+                                  setState(() => widget._playerSongName = track.title); //set this to title.index
                                   if(track.previewUrl != null)
                                     advancedPlayer.play(track.previewUrl); // <-- URL HERE
                                   setState(() => _widgetIndex = 1);
-                                  setState(() => _url = track.previewUrl);
+                                  setState(() => widget._url = track.previewUrl);
                                 },
                                 title: Text(track.title,
                                 style: TextStyle(color: Colors.white,
