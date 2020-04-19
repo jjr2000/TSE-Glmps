@@ -79,7 +79,7 @@ create table track (
 
   Future<List<SpotifyAlbum>> getAlbums() async {
     await open();
-    List<SpotifyAlbum> albums;
+    List<SpotifyAlbum> albums = List<SpotifyAlbum>();
 
     List<Map> dbAlbums = await db.query('album',
         columns: ['id', 'artists', 'title', 'imageUrl', 'releaseDatePrecision', 'releaseDate', 'dbId']);
