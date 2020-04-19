@@ -43,11 +43,24 @@ class _LibraryState extends State<Library> {
                       );
                     });
                   },
-                  title: Text(album.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                      )
-
+                  title: Container(
+                    child: Row(
+                      children: <Widget>[
+                      Expanded(
+                        child: Text(album.title,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),),
+                      ),
+                        Container(
+                          child: IconButton(
+                            icon: Icon(Icons.delete_forever),
+                            color: Colors.white,
+                            onPressed: () {},
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   subtitle: Text(album.artists,
                     style: TextStyle(
