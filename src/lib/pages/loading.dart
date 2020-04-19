@@ -35,7 +35,7 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Links(),
+                    builder: (context) => Links(album: value3),
                   )
               );
             });

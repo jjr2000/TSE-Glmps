@@ -50,12 +50,12 @@ class _LibraryState extends State<Library> {
                 color: Colors.grey[850],
                 child: ListTile(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Links(art: albums[index].art, title: albums[index].title, artist: albums[index].artist, song: albums[index].song, songName: albums[index].songName,  spotifyLink: albums[index].spotifyLink,),
-                        )
-                    );
+                    //Navigator.push(
+                    //   context,
+                    //    MaterialPageRoute(
+                    //      builder: (context) => Links(art: albums[index].art, title: albums[index].title, artist: albums[index].artist, song: albums[index].song, songName: albums[index].songName,  spotifyLink: albums[index].spotifyLink,),
+                    //    )
+                    //);
                   },
                   title: Text(albums[index].title,
                       style: TextStyle(
