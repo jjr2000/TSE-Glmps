@@ -6,8 +6,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image/image.dart' as img;
+import '../dbProvider.dart';
 
 import 'package:path/path.dart';
+import 'package:spotify_api/spotify_api.dart';
 import 'package:uipage/pages/library.dart';
 
 import 'confirm.dart';
@@ -134,8 +136,14 @@ class _HomeState extends State<Home> {
 
                         ),
                         onPressed: (){
-                          Navigator.pushNamed(context, '/library');
-                          _library();
+                          DbProvider().getAlbums().then((value){
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Library(albums: value)
+                                )
+                            );
+                          });
                         },
                       ),
                   ),
