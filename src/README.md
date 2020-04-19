@@ -1,6 +1,6 @@
-# uipage
+# GLMPS
 
-A new Flutter application.
+An application for scanning album covers to get a track list and track preview.
 
 ## Getting Started
 

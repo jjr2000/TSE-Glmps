@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:uipage/pages/landing.dart';
+import 'pages/landing.dart';
 import 'pages/confirm.dart';
 import 'pages/about.dart';
 import 'pages/home.dart';

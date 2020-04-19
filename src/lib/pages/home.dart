@@ -10,7 +10,7 @@ import '../dbProvider.dart';
 
 import 'package:path/path.dart';
 import 'package:spotify_api/spotify_api.dart';
-import 'package:uipage/pages/library.dart';
+import 'library.dart';
 
 import 'confirm.dart';
 

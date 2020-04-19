@@ -1,4 +1,4 @@
-package com.example.uipage
+package com.glmps.app
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
