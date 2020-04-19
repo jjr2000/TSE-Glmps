@@ -17,7 +17,7 @@ Future<void> main() async {
         initialRoute: '/landing',
         routes: {
           '/landing': (context) => Landing(),
-          '/home': (context) => Home(cameras: cameras),
+          '/home': (context) => Home(initCameras: cameras),
           '/library': (context) => Library(),
           '/links': (context) => Links(),
           '/about': (context) => About()

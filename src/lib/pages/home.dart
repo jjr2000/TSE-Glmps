@@ -15,18 +15,16 @@ import 'library.dart';
 import 'confirm.dart';
 
 class Home extends StatefulWidget {
-  final List<CameraDescription> cameras;
+  final List<CameraDescription> initCameras;
 
-  const Home({
-    Key key,
-    @required this.cameras,
-  }) : super(key: key);
+  const Home({Key key, this.initCameras}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  List<CameraDescription> cameras;
   CameraController _controller;
   Future<void> _initializeControllerFuture;
   File _image;
@@ -105,14 +103,28 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // To display the current output from the Camera,
-    // create a CameraController.
+
+    // Attempt to fix the issue of the camera breaking when opening the app from lock screen
+    /*if(widget.initCameras == null) {
+      availableCameras().then((value) {
+        cameras = value;
+        initialiseCamera();
+      });
+    } else {
+      cameras = widget.initCameras;
+      initialiseCamera();
+    }*/
+
+    initialiseCamera();
+  }
+
+  void initialiseCamera()  {
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.cameras.first,
-      // Define the resolution to use.
-      ResolutionPreset.medium,
-      enableAudio: false
+        widget.initCameras.first, // change to cameras.first if using the attempted fix above
+        // Define the resolution to use.
+        ResolutionPreset.medium,
+        enableAudio: false
     );
 
     // Next, initialize the controller. This returns a Future.
