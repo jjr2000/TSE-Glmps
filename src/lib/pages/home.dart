@@ -63,11 +63,19 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void open_gallery() async {
+  void open_gallery(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
-      // Open confirmation
+      if(_image != null) {
+        // Open confirmation
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Confirm(image: _image),
+          ),
+        );
+      }
     });
   }
 
@@ -161,7 +169,7 @@ class _HomeState extends State<Home> {
                           child: Image.asset('assets/gallery.png',)
                       ),
                       onPressed: (){
-                        open_gallery();
+                        open_gallery(context);
                         _gallery();
                       },
                     ),

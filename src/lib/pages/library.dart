@@ -56,7 +56,13 @@ class _LibraryState extends State<Library> {
                           child: IconButton(
                             icon: Icon(Icons.delete_forever),
                             color: Colors.white,
-                            onPressed: () {},
+                            onPressed: () {
+                              DbProvider().delete(album.dbId).then((value){
+                                setState(() {
+                                  widget.albums.removeAt(index);
+                                });
+                              });
+                            },
                           ),
                         ),
                       ],
