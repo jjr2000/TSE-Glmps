@@ -239,6 +239,28 @@ class SpotifyAlbum {
   String searchTerm, id, artists, title, imageUrl, releaseDatePrecision;
   DateTime releaseDate;
   List<SpotifyTrack> tracks;
+
+  int dbId;
+
+  Map<String, dynamic> toMap()
+    => <String, dynamic>{
+      'id': id,
+      'artists': artists,
+      'title': title,
+      'imageUrl': imageUrl,
+      'releaseDatePrecision': releaseDatePrecision,
+      'releaseDate': releaseDate.toIso8601String()
+    };
+  
+  SpotifyAlbum.fromMap(Map<String, dynamic>map) {
+    id = map['id'];
+    artists = map['artists'];
+    title = map['title'];
+    imageUrl = map['imageUrl'];
+    releaseDatePrecision = map['releaseDatePrecision'];
+    releaseDate = DateTime.parse(map['releaseDate']);
+    dbId = map['dbId'];
+  }
 }
 
 class SpotifyTrack {
@@ -250,4 +272,21 @@ class SpotifyTrack {
   String title, previewUrl;
   /// Length stored using duration to make using elements to display the time easy.
   Duration length;
+
+  int dbAlbumId;
+
+  Map<String, dynamic> toMap()
+  => <String, dynamic>{
+    'title': title,
+    'previewUrl': previewUrl,
+    'length': length.inMilliseconds,
+    'dbAlbumId': dbAlbumId,
+  };
+
+  SpotifyTrack.fromMap(Map<String, dynamic>map) {
+    title = map['title'];
+    previewUrl = map['previewUrl'];
+    length = Duration(milliseconds: map['length']);
+    dbAlbumId = map['dbAlbumId'];
+  }
 }

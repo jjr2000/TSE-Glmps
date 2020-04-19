@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:web_detect/web_detect.dart';
 import 'package:spotify_api/spotify_api.dart';
 
-import 'library.dart';
+import '../dbProvider.dart';
+
+import 'links.dart';
 
 class WebRequestLoading extends StatefulWidget {
   final String base;
@@ -28,37 +30,39 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
       if(value.found) {
         searchAlbum(value.result).then((value2) {
           if (value2.found) {
-            //we got an album BOIS do what you want with the data from here
-            // Pass on to next widget here
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Library(),
-                )
-            );
+            //we got an album time to add it into our db
+            DbProvider().insert(value2).then((value3) {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Links(),
+                  )
+              );
+            });
+
           } else {
             //Let User know we couldn't find the album
             error = "Album not found";
             Navigator.pop(context);
-            _neverSatisfied();
+            _showDialog();
           }
         });
       } else {
         // Tell the user their image was shit and have them retake it.
         error = "Detection error please check lighting and ensure the record is fully visible.";
         Navigator.pop(context);
-        _neverSatisfied();
+        _showDialog();
       }
     });
   }
 
-  Future<void> _neverSatisfied() async {
+  Future<void> _showDialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Alert!'),
+          title: Text('Oops!'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -68,7 +72,7 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Ok'),
+              child: Text('Alrighty'),
               onPressed: () {
                 Navigator.pop(context);
               },
