@@ -67,6 +67,7 @@ create table track (
           columns: ['title', 'previewUrl', 'length', 'dbAlbumId'],
           where: 'dbAlbumId = ?',
           whereArgs: [album.dbId]);
+      album.tracks = List<SpotifyTrack>();
       for (int i = 0; i < tracks.length; i++) {
         album.tracks.add(SpotifyTrack.fromMap(tracks[i]));
       }
