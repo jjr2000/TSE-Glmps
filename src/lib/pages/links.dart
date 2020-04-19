@@ -200,17 +200,27 @@ class _LinksState extends State<Links> {
                               padding: const EdgeInsets.all(16.0),
                               child: Image.network(widget.album.imageUrl),
                             ),
-                            Text(widget.album.title,
-                              style: TextStyle(
-                                fontSize: 30,
-                                letterSpacing: 1.0,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30),
+                              child: FittedBox(
+                                child: Center(
+                                  child: Text(widget.album.title,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      letterSpacing: 1.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),),
+                                ),
+                              ),
+                            ),
 
                             SizedBox(height: 5,),
                             Text(widget.album.artists,
+                              textAlign: TextAlign.center,
                               style: TextStyle(
+
                                 fontSize: 15,
                                 letterSpacing: 1.0,
                                 color: Colors.white,
@@ -262,6 +272,7 @@ class _LinksState extends State<Links> {
                                   if(track.previewUrl != null)
                                     advancedPlayer.play(track.previewUrl); // <-- URL HERE
                                   setState(() => _widgetIndex = 1);
+                                  setState(() => _url = track.previewUrl);
                                 },
                                 title: Text(track.title,
                                 style: TextStyle(color: Colors.white,
