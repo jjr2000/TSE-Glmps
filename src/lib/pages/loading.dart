@@ -62,11 +62,22 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Oops!'),
+          backgroundColor: Colors.grey[900],
+          title: Text('Oops!',
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.white
+            ),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(error),
+                Text(error,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white
+                  ),
+                ),
               ],
             ),
           ),
