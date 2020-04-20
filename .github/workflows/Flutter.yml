@@ -29,3 +29,5 @@ jobs:
       # Build APK
       - run: flutter build apk
         working-directory: src
+      - run: flutter build ios --release --no-codesign
+        working-directory: src
