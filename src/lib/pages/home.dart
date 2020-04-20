@@ -2,16 +2,11 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 import 'dart:async';
 import 'dart:io';
-import 'dart:convert';
-import 'package:image/image.dart' as img;
 import '../dbProvider.dart';
-
-import 'package:path/path.dart';
-import 'package:spotify_api/spotify_api.dart';
 import 'library.dart';
-
 import 'confirm.dart';
 
 class Home extends StatefulWidget {
@@ -32,12 +27,12 @@ class _HomeState extends State<Home> {
   double  _widthLib = 20;
   double _heightLib = 20;
 
-  double _library() {
+  void _library() {
     setState(() {
       _heightLib +=20;
       _widthLib +=20;
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(milliseconds: 200), () {
       setState(() {
         _widthLib -= 20;
         _heightLib -= 20;
@@ -48,12 +43,12 @@ class _HomeState extends State<Home> {
   double  _widthGal = 20;
   double _heightGal = 20;
 
-  double _gallery() {
+  void _gallery() {
     setState(() {
       _widthGal += 20;
       _heightGal += 20;
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(milliseconds: 200), () {
       setState(() {
         _widthGal -= 20;
         _heightGal -= 20;
@@ -61,7 +56,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void open_gallery(BuildContext context) async {
+  void openGallery(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
@@ -156,6 +151,7 @@ class _HomeState extends State<Home> {
 
                         ),
                         onPressed: (){
+                          _library();
                           DbProvider().getAlbums().then((value){
                             Navigator.push(
                                 context,
@@ -181,8 +177,8 @@ class _HomeState extends State<Home> {
                           child: Image.asset('assets/gallery.png',)
                       ),
                       onPressed: (){
-                        open_gallery(context);
                         _gallery();
+                        openGallery(context);
                       },
                     ),
                   ),

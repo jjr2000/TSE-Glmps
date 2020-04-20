@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
@@ -14,9 +11,6 @@ class Links extends StatefulWidget {
   final SpotifyAlbum album;
 
   Links({Key key, @required this.album}) : super(key: key);
-
-  String _playerSongName = '--';
-  String _url;
 
   @override
   _LinksState createState() => _LinksState();
@@ -33,13 +27,15 @@ class _LinksState extends State<Links> {
   Duration _position = Duration();
   AudioPlayer advancedPlayer;
   AudioCache audioCache;
+  String _playerSongName = '--';
+  String _url;
 
   @override
   void initState() {
     super.initState();
     _color = _randomColor.randomColor(colorBrightness: ColorBrightness.light);
-    widget._playerSongName = widget.album.tracks[0].title;
-    widget._url = widget.album.tracks[0].previewUrl;
+    _playerSongName = widget.album.tracks[0].title;
+    _url = widget.album.tracks[0].previewUrl;
     
     initPlayer();
   }
@@ -49,12 +45,12 @@ class _LinksState extends State<Links> {
     advancedPlayer = AudioPlayer();
     audioCache = AudioCache(fixedPlayer: advancedPlayer);
 
-    advancedPlayer.durationHandler = (d) => setState((){
-      _duration = d;
+    advancedPlayer.onDurationChanged.listen((Duration d) {
+      setState(() => _duration = d);
     });
 
-    advancedPlayer.positionHandler = (p) => setState((){
-      _position = p;
+    advancedPlayer.onAudioPositionChanged.listen((Duration p) {
+      setState(() => _position = p);
     });
   }
 
@@ -72,22 +68,6 @@ class _LinksState extends State<Links> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _btn (String txt, VoidCallback onPressed){
-    return ButtonTheme(
-      minWidth: 50.0,
-      child: Container(
-        width: 100,
-        height: 10,
-        child: FlatButton(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-            child: Text(txt),
-            color: Colors.pink[900],
-            textColor: Colors.white,
-            onPressed: onPressed),
-      ),
     );
   }
 
@@ -125,7 +105,7 @@ class _LinksState extends State<Links> {
                     size: 40,
                   ),
                   onPressed: (){
-                    advancedPlayer.play(widget._url);
+                    advancedPlayer.play(_url);
                     setState(
                             () => _widgetIndex = 1);
                   },
@@ -146,7 +126,7 @@ class _LinksState extends State<Links> {
             ),
             slider(),
             SizedBox(height: 10,),
-            Text(widget._playerSongName,
+            Text(_playerSongName,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -165,21 +145,17 @@ class _LinksState extends State<Links> {
 
   final player = AudioCache();
 
-  void _launchUrl(String Url) async {
-    if (await canLaunch(Url)) {
-      await launch(Url);
+  void _launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
     }
     else {
       throw 'could not open';
     }
   }
 
-  Future<bool> _onBackPressed(){
-    advancedPlayer.stop();
-    setState(
-            () => _widgetIndex = 0);
-    Navigator.pop(context, true);
-  }
+  Future<bool> _onBackPressed() async
+  => await advancedPlayer.stop() == 1;
 
   @override
   Widget build(BuildContext context) {
@@ -253,11 +229,11 @@ class _LinksState extends State<Links> {
                       ),
                     ),
                     Offstage(
-                      offstage: widget._url == null,
+                      offstage: _url == null,
                       child: localAudio()
                     ),
                     Offstage(
-                        offstage: widget._url != null,
+                        offstage: _url != null,
                         child: Text('No preview available.',
                             style: TextStyle(color: Colors.white,
                             )
@@ -285,18 +261,24 @@ class _LinksState extends State<Links> {
                               child: ListTile(
                                 onTap: () {
                                   advancedPlayer.stop();
-                                  setState(() => widget._playerSongName = track.title); //set this to title.index
+                                  setState(() => _playerSongName = track.title);
                                   if(track.previewUrl != null)
-                                    advancedPlayer.play(track.previewUrl); // <-- URL HERE
+                                    advancedPlayer.play(track.previewUrl);
                                   setState(() => _widgetIndex = 1);
-                                  setState(() => widget._url = track.previewUrl);
+                                  setState(() => _url = track.previewUrl);
                                 },
                                 title: Text(track.title,
                                 style: TextStyle(color: Colors.white,
                                 ),),
                                 leading: Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Image.network(widget.album.imageUrl), //<-- Please give each track an index number so I can place it here
+                                  child: Text('${index+1}:',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
                                 ),
                               ),
                             ),

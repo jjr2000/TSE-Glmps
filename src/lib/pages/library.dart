@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:spotify_api/spotify_api.dart';
 import 'links.dart';
 import '../dbProvider.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:audioplayers/audio_cache.dart';
 
 class Library extends StatefulWidget {
   final List<SpotifyAlbum> albums;

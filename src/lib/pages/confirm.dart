@@ -1,13 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:image/image.dart' as img;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:web_detect/web_detect.dart';
-import 'package:spotify_api/spotify_api.dart';
-
-import 'library.dart';
 import 'loading.dart';
 
 class Confirm extends StatefulWidget {

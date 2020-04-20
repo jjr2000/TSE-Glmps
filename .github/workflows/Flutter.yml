@@ -19,10 +19,13 @@ jobs:
           flutter-version: '1.12.14'
           channel: 'dev'
       - run: flutter pub get
-        working-directory: src/modules/spotify_api
+        working-directory: src
       # run static analys code
       - run: flutter  analyze
-        working-directory: src/modules/spotify_api
+        working-directory: src
       # run  flutter widgets tests  and unit tests
       - run: flutter test --coverage
-        working-directory: src/modules/spotify_api
+        working-directory: src
+      # Build APK
+      - run: flutter build apk
+        working-directory: src

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:async';
 
 class About extends StatefulWidget {
 
@@ -11,9 +10,9 @@ class About extends StatefulWidget {
 
 class _AboutState extends State<About> {
 
-  void _launchUrl(String Url) async {
-    if (await canLaunch(Url)) {
-      await launch(Url);
+  void _launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
     }
     else {
       throw 'could not open';

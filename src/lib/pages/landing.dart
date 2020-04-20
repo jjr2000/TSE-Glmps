@@ -3,14 +3,14 @@ import 'package:flutter/animation.dart';
 
 class Landing extends StatefulWidget {
   @override
-  _landingState createState() => _landingState();
+  _LandingState createState() => _LandingState();
 }
 
-class _landingState extends State<Landing> {
+class _LandingState extends State<Landing> {
   double  _width = 270;
   double _height = 100;
 
-  double _enlarge() {
+  void _enlarge() {
     setState(() {
       _width = 300;
     });
