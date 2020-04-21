@@ -18,11 +18,12 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<CameraDescription> cameras;
   CameraController _controller;
   Future<void> _initializeControllerFuture;
   File _image;
+  bool _cameraOn = true;
 
   double  _widthLib = 20;
   double _heightLib = 20;
@@ -76,6 +77,7 @@ class _HomeState extends State<Home> {
     // Take the Picture in a try / catch block. If anything goes wrong,
     // catch the error.
     try {
+      setState(() { _cameraOn = true; });
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
       // Construct the path where the image should be saved using the
@@ -98,7 +100,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     // Attempt to fix the issue of the camera breaking when opening the app from lock screen
     /*if(widget.initCameras == null) {
       availableCameras().then((value) {
@@ -113,6 +115,36 @@ class _HomeState extends State<Home> {
     initialiseCamera();
   }
 
+  @override
+  void deactivate() {
+    super.deactivate();
+    _cameraOn = false;
+    //_controller.dispose();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _cameraOn = false;
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      print('Paused');
+      _cameraOn = false;
+    }
+    if(state == AppLifecycleState.resumed)
+    {
+      print('Resumed');
+      _cameraOn = true;
+      _initializeControllerFuture;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
   void initialiseCamera()  {
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
@@ -121,13 +153,14 @@ class _HomeState extends State<Home> {
         ResolutionPreset.medium,
         enableAudio: false
     );
-
+    _cameraOn = true;
     // Next, initialize the controller. This returns a Future.
     _initializeControllerFuture = _controller.initialize();
   }
 
   @override
   Widget build(BuildContext context) {
+    _cameraOn = true;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -199,7 +232,7 @@ class _HomeState extends State<Home> {
                 Center(
                   child: AspectRatio(
                       aspectRatio: _controller.value.aspectRatio,
-                      child: CameraPreview(_controller)
+                      child: _cameraOn ? CameraPreview(_controller) : Container()
                   ),
                 ),
                 Align(
