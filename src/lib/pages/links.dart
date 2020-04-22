@@ -178,7 +178,10 @@ class _LinksState extends State<Links> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Image.network(widget.album.imageUrl),
+                              child: Image.network(widget.album.imageUrl,
+                                width: 400,
+                                fit: BoxFit.fill,
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 30),
