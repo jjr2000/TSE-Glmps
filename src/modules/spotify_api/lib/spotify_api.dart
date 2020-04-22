@@ -57,20 +57,25 @@ Future<bool> _searchForAlbumId(SpotifyAlbum album) async {
       // Check if we have an access token.
       (_accessToken != null ? _accessToken.isEmpty : true)
           // if we do have one check it hasn't expired.
-          || (_accessTokenExpires != null ? _accessTokenExpires.isAfter(DateTime.now()) : true)
+          || (_accessTokenExpires != null ? DateTime.now().isAfter(_accessTokenExpires) : true)
     )
       // if we don't have a usable token get a new one and make sure the query returns success
       if (!await _getClientCredentials())
         throw Stream.error("Failed to get cradentials");
 
+    print(_accessToken);
+    String term = Uri.encodeComponent(album.searchTerm);
+    print(term);
+    Uri uri = Uri.parse(_apiUrl
+        + 'search?'
+        + 'q=$term'
+        + '&type=album'
+        + '&market=$_market'
+    );
+    print(uri);
     var response = await http.get(
       // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
-        Uri.parse(_apiUrl
-            + 'search?'
-            + 'q=${Uri.encodeComponent(album.searchTerm)}'
-            + '&type=album'
-            + '&market=$_market'
-        ),
+        uri,
         headers: {
           // the access token we get from spotify is already encoded so no extra work needs to be done.
           'Authorization': 'Bearer $_accessToken'
@@ -80,12 +85,40 @@ Future<bool> _searchForAlbumId(SpotifyAlbum album) async {
     if (response.statusCode == 200) {
       // Decode the json return into a dynamic map so we can access the elements programmatically.
       Map<String, dynamic> decoded = json.decode(response.body);
-      success = true;
       // Decode the album separately so that if it doesn't exist we can avoid errors
-      Map<String, dynamic> decodedAlbum = decoded['albums']['items'][0];
-      if (decodedAlbum != null) {
-        album.found = true;
-        album.id = decodedAlbum['id'];
+      if(decoded['albums']['items'].length > 0) {
+        success = true;
+        Map<String, dynamic> decodedAlbum = decoded['albums']['items'][0];
+        if (decodedAlbum != null) {
+          album.found = true;
+          album.id = decodedAlbum['id'];
+        }
+      }else{
+        //Lets give apple a shot
+        Uri appleUri = Uri.parse(_itunesUrl
+            + '/search?'
+            + 'term=$term'
+            + '&entity=album'
+            + '&media=music'
+            + '&limit=1'
+            + '&country=$_market'
+        );
+        var appleResponse = await http.get(appleUri);
+        if (appleResponse.statusCode == 200) {
+          decoded = json.decode(appleResponse.body);
+          if(decoded['resultCount'] > 0) {
+            Map<String, dynamic> decodedAlbum = decoded['results'][0];
+            success = true;
+            album.found = true;
+            album._appleTrackCount = decodedAlbum['trackCount'];
+            album.artists = decodedAlbum['artistName'];
+            album.title = decodedAlbum['collectionName'];
+            // The first image is the high resolution one so that's what we'll use
+            album.imageUrl = decodedAlbum['artworkUrl100'];
+            album.releaseDatePrecision = 'day';
+            album.releaseDate = DateFormat('yyyy-MM-dd').parse(decodedAlbum['releaseDate'].toString().substring(0,10));
+          }
+        }
       }
     } else {
       print('something went wrong, status code: ${response.statusCode.toString()}');
@@ -100,91 +133,137 @@ Future<bool> _searchForAlbumId(SpotifyAlbum album) async {
 Future<bool> _searchForAlbum(SpotifyAlbum album) async {
   bool success = false;
   try {
-    if (
+    if(album._appleTrackCount != null)
+    {
+      var itunesResponse = await http.get(
+        // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
+          Uri.parse(
+              '$_itunesUrl/search'
+                  + '?term=${Uri.encodeComponent(album.title)}'
+                  + '&limit=${album._appleTrackCount}'
+                  + '&country=$_market'
+                  + '&entity=musicTrack'
+                  + '&media=music'
+          )
+      );
+
+      if (itunesResponse.statusCode == 200) {
+        // Decode the json return into a dynamic map so we can access the elements programmatically.
+        Map<String, dynamic> decoded = json.decode(itunesResponse.body);
+        success = true;
+        album.tracks = List<SpotifyTrack>(decoded['resultCount']);
+
+        for(int i = 0; i < decoded['resultCount']; i++)
+        {
+          Map<String, dynamic> track = decoded['results'][i];
+          int trackNum = track['trackNumber'] - 1;
+          print(trackNum);
+          if(album.tracks[trackNum] != null)
+            throw Exception('Duplicate Track Parse Failed');
+
+          album.tracks[trackNum] = new SpotifyTrack(track['trackCensoredName'], track['previewUrl'],
+              Duration(milliseconds: track['trackTimeMillis']));
+        }
+
+      } else {
+      print('something went wrong, status code: ${itunesResponse.statusCode
+          .toString()}');
+    }
+
+    }
+    else {
+      if (
       // Check if we have an access token.
       (_accessToken != null ? _accessToken.isEmpty : true)
-        // if we do have one check it hasn't expired.
-          || (_accessTokenExpires != null ? _accessTokenExpires.isAfter(DateTime.now()) : true)
-    )
-      // if we don't have a usable token get a new one and make sure the query returns success
-      if (!await _getClientCredentials())
-        throw Stream.error("Failed to get cradentials");
+          // if we do have one check it hasn't expired.
+          || (_accessTokenExpires != null ? _accessTokenExpires.isAfter(
+          DateTime.now()) : true)
+      )
+        // if we don't have a usable token get a new one and make sure the query returns success
+        if (!await _getClientCredentials())
+          throw Stream.error("Failed to get cradentials");
 
-    var response = await http.get(
+      var response = await http.get(
         // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
-        Uri.encodeFull(_apiUrl + 'albums/${album.id}'
-            + '?market=$_market'
-        ),
-        headers: {
-          // the access token we get from spotify is already encoded so no extra work needs to be done.
-          'Authorization': 'Bearer $_accessToken'
-        }
-    );
-
-    if (response.statusCode == 200) {
-      // Decode the json return into a dynamic map so we can access the elements programmatically.
-      Map<String, dynamic> decoded = json.decode(response.body);
-      success = true;
-
-      //Making sure artists is blank before we loop
-      album.artists = '';
-      List<dynamic> artists = decoded['artists'];
-      // loop through the artists list
-      for (int i = 0; i < artists.length;)
-        // Add the artist name to the string and if it's not the last one also a comma and a space
-        album.artists += '${artists[i]['name']}${++i < artists.length ? ', ' : ''}';
-
-      album.title = decoded['name'];
-      // The first image is the high resolution one so that's what we'll use
-      album.imageUrl = decoded['images'][0]['url'];
-      album.releaseDatePrecision = decoded['release_date_precision'];
-      // Correctly parse the release date into a Date element depending on its precision.
-      switch (album.releaseDatePrecision) {
-        case ('day'):
-          album.releaseDate =
-              DateFormat('yyyy-MM-dd').parse(decoded['release_date']);
-          break;
-        case ('month'):
-          album.releaseDate =
-              DateFormat('yyyy-MM').parse(decoded['release_date']);
-          break;
-        case ('year'):
-          album.releaseDate = DateFormat('yyyy').parse(decoded['release_date']);
-          break;
-        default:
-          album.releaseDate = null;
-          break;
-      }
-      // Make sure the list of tracks is empty before we loop through the returned ones.
-      album.tracks.clear();
-      List<dynamic> tracks = decoded['tracks']['items'];
-      for (int i = 0; i < tracks.length; i++) {
-        String previewUrl = tracks[i]['preview_url'];
-        // Spotify isn't great at giving us preview Url's so if it hasn't returned one we'll search apples itunes library of previews instead.
-        if (previewUrl?.isEmpty ?? true) {
-          var itunesResponse = await http.get(
-            // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
-            Uri.parse(
-              '$_itunesUrl/search'
-              + '?term=${Uri.encodeComponent(tracks[i]['name'] + ', ' + album.artists)}'
-              + '&limit=1'
-              + '&country=$_market'
-              + '&entity=song"'
-            )
-          );
-
-          if (itunesResponse.statusCode == 200) {
-            Map<String, dynamic> itunesDecoded =
-                json.decode(itunesResponse.body);
-            if (itunesDecoded['resultCount'] == 1)
-              previewUrl = itunesDecoded['results'][0]['previewUrl'];
+          Uri.encodeFull(_apiUrl + 'albums/${album.id}'
+              + '?market=$_market'
+          ),
+          headers: {
+            // the access token we get from spotify is already encoded so no extra work needs to be done.
+            'Authorization': 'Bearer $_accessToken'
           }
+      );
+
+      if (response.statusCode == 200) {
+        // Decode the json return into a dynamic map so we can access the elements programmatically.
+        Map<String, dynamic> decoded = json.decode(response.body);
+        success = true;
+
+        //Making sure artists is blank before we loop
+        album.artists = '';
+        List<dynamic> artists = decoded['artists'];
+        // loop through the artists list
+        for (int i = 0; i < artists.length;)
+          // Add the artist name to the string and if it's not the last one also a comma and a space
+          album.artists +=
+          '${artists[i]['name']}${++i < artists.length ? ', ' : ''}';
+
+        album.title = decoded['name'];
+        // The first image is the high resolution one so that's what we'll use
+        album.imageUrl = decoded['images'][0]['url'];
+        album.releaseDatePrecision = decoded['release_date_precision'];
+        // Correctly parse the release date into a Date element depending on its precision.
+        switch (album.releaseDatePrecision) {
+          case ('day'):
+            album.releaseDate =
+                DateFormat('yyyy-MM-dd').parse(decoded['release_date']);
+            break;
+          case ('month'):
+            album.releaseDate =
+                DateFormat('yyyy-MM').parse(decoded['release_date']);
+            break;
+          case ('year'):
+            album.releaseDate =
+                DateFormat('yyyy').parse(decoded['release_date']);
+            break;
+          default:
+            album.releaseDate = null;
+            break;
         }
-        album.tracks.add(new SpotifyTrack(tracks[i]['name'], previewUrl,
-            Duration(milliseconds: tracks[i]['duration_ms'])));
+        // Make sure the list of tracks is empty before we loop through the returned ones.
+        album.tracks.clear();
+        List<dynamic> tracks = decoded['tracks']['items'];
+        for (int i = 0; i < tracks.length; i++) {
+          String previewUrl = tracks[i]['preview_url'];
+          // Spotify isn't great at giving us preview Url's so if it hasn't returned one we'll search apples itunes library of previews instead.
+          if (previewUrl?.isEmpty ?? true) {
+            var itunesResponse = await http.get(
+              // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
+                Uri.parse(
+                    '$_itunesUrl/search'
+                        + '?term=${Uri.encodeComponent(
+                        tracks[i]['name'] + ', ' + album.artists)}'
+                        + '&limit=1'
+                        + '&country=$_market'
+                        + '&entity=musicTrack'
+                        + '&media=music'
+                )
+            );
+
+            if (itunesResponse.statusCode == 200) {
+              Map<String, dynamic> itunesDecoded =
+              json.decode(itunesResponse.body);
+              if (itunesDecoded['resultCount'] == 1)
+                previewUrl = itunesDecoded['results'][0]['previewUrl'];
+            }
+          }
+          album.tracks.add(new SpotifyTrack(tracks[i]['name'], previewUrl,
+              Duration(milliseconds: tracks[i]['duration_ms'])));
+        }
+      } else {
+        print('something went wrong, status code: ${response.statusCode
+            .toString()}');
       }
-    } else {
-      print('something went wrong, status code: ${response.statusCode.toString()}');
     }
   } catch (error) {
     print('An error occured 3');
@@ -205,12 +284,14 @@ Future<SpotifyAlbum> searchAlbum(String searchTerm) async {
 class SpotifyAlbum {
   SpotifyAlbum()
       : found = false,
-        tracks = new List<SpotifyTrack>();
+        tracks = new List<SpotifyTrack>(),
+        _appleTrackCount = null;
 
   SpotifyAlbum.withSearchTerm(String searchTerm)
       : found = false,
         searchTerm = searchTerm,
-        tracks = new List<SpotifyTrack>();
+        tracks = new List<SpotifyTrack>(),
+        _appleTrackCount = null;
 
   /// Formats release date into an easy to use string using precision to get the relevant parts.
   String getReadableReleaseDate() {
@@ -239,6 +320,7 @@ class SpotifyAlbum {
   String searchTerm, id, artists, title, imageUrl, releaseDatePrecision;
   DateTime releaseDate;
   List<SpotifyTrack> tracks;
+  int _appleTrackCount;
 
   int dbId;
 

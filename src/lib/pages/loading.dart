@@ -23,7 +23,9 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
     print(widget.base);
     webDetect(widget.base).then((value) {
       if(value.found) {
+        print(value.result);
         searchAlbum(value.result).then((value2) {
+          print(value2);
           if (value2.found) {
             //we got an album time to add it into our db
             DbProvider().insert(value2).then((value3) {

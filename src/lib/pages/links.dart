@@ -213,19 +213,22 @@ class _LinksState extends State<Links> {
                         ),
                       ),
                     ),
-                    FlatButton(
-                      onPressed: () {
-                        _launchUrl('https://open.spotify.com/album/${widget.album.id}');
-                      },
-                      color: Colors.green,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20,0,20,0),
-                        child: Text('Open In Spotify',
-                          style: TextStyle(color: Colors.white),),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(18),
-                        side: BorderSide(color: Colors.green[600]),
+                    Offstage(
+                      offstage: widget.album.id == null,
+                      child: FlatButton(
+                        onPressed: () {
+                          _launchUrl('https://open.spotify.com/album/${widget.album.id}');
+                        },
+                        color: Colors.green,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20,0,20,0),
+                          child: Text('Open In Spotify',
+                            style: TextStyle(color: Colors.white),),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(18),
+                          side: BorderSide(color: Colors.green[600]),
+                        ),
                       ),
                     ),
                     Offstage(

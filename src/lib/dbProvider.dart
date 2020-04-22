@@ -15,12 +15,12 @@ class DbProvider {
 
   Future open() async {
     String path = await _getPath();
-    db = await openDatabase(path, version: 1,
+    db = await openDatabase(path, version: 2,
         onCreate: (Database db, int version) async {
           await db.execute('''
 create table album ( 
   dbId integer primary key autoincrement, 
-  id text not null,
+  id text null,
   artists text not null,
   title text not null,
   imageUrl text not null,
@@ -34,7 +34,37 @@ create table track (
   length int not null,
   dbAlbumId int not null)
 ''');
-        });
+        },
+        onUpgrade: (Database db, int oldVersion, int newVersion) async {
+          if (oldVersion == 1) {
+            await db.execute('''
+PRAGMA foreign_keys=off;
+
+BEGIN TRANSACTION;
+
+ALTER TABLE album RENAME TO _album_old;
+
+create table album ( 
+  dbId integer primary key autoincrement, 
+  id text null,
+  artists text not null,
+  title text not null,
+  imageUrl text not null,
+  releaseDatePrecision text not null,
+  releaseDate text not null)
+
+INSERT INTO table1 ('id', 'artists', 'title', 'imageUrl', 'releaseDatePrecision', 'releaseDate', 'dbId')
+  SELECT 'id', 'artists', 'title', 'imageUrl', 'releaseDatePrecision', 'releaseDate', 'dbId'
+  FROM _album_old;
+
+COMMIT;
+
+PRAGMA foreign_keys=on;
+''');
+            oldVersion++;
+          }
+        }
+        );
   }
 
   Future<SpotifyAlbum> insert(SpotifyAlbum album) async {
