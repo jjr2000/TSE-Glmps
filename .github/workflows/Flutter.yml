@@ -21,13 +21,13 @@ jobs:
       - run: flutter pub get
         working-directory: src
       # run static analys code
-      - run: flutter  analyze
-        working-directory: src
+      #- run: flutter  analyze
+      #  working-directory: src
       # run  flutter widgets tests  and unit tests
       - run: flutter test --coverage
         working-directory: src
       # Build APK
-      - run: flutter build apk
-        working-directory: src
-      - run: flutter build ios --release --no-codesign
-        working-directory: src
+      #- run: flutter build apk
+      #  working-directory: src
+      #- run: flutter build ios --release --no-codesign
+      #  working-directory: src
