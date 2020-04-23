@@ -2,10 +2,10 @@
 on: 
   push:
     tags-ignore:
-      - '*'
+      - '*.*.*'
   pull_request:
     tags-ignore:
-      - '*'  
+      - '*.*.*'  
 #The name of your workflow.
 name:  flutter test and build artificat
 
