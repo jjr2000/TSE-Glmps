@@ -11,6 +11,9 @@ jobs:
     name: Upload Release Asset
     runs-on: ubuntu-latest
     steps:
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Create Release
@@ -30,6 +33,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./Releases/${{ github.ref }}/app-release.apk
-          asset_name: GLMPS-${{ github.ref }}.apk
+          asset_path: ./Releases/${{steps.tag.outputs.tag}}/app-release.apk
+          asset_name: GLMPS-${{steps.tag.outputs.tag}}.apk
           asset_content_type: application/vnd.android.package-archive
