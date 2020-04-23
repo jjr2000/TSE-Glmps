@@ -161,7 +161,7 @@ class _LinksState extends State<Links> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: _onBackPressed,
+      onWillPop: _onBackPressed,
       child: DefaultTabController(
         length: 1,
         child: Scaffold(

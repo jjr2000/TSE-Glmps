@@ -15,3 +15,4 @@ doc/api/
 key.properties
 
 !/src/build/app/outputs/apk/release/*
+.idea/

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6fdd6a10-5121-4761-9b72-76424d576e8d" name="Default Changelist" comment="">
+    <list default="true" id="6fdd6a10-5121-4761-9b72-76424d576e8d" name="Default Changelist" comment="Merge remote-tracking branch 'refs/remotes/origin/UI_Camera_Preview_Branch'&#10;&#10;Conflicts:&#10;&#9;src/lib/pages/Albums.dart&#10;&#9;src/lib/pages/albums.dart&#10;&#9;src/lib/pages/library.dart&#10;&#9;src/pubspec.yaml">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/pages/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/pages/home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/pages/albums.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/pages/library.dart" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/pages/library.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/pages/links.dart" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/pages/links.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/pubspec.yaml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,16 +31,16 @@
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="dart.analysis.tool.window.force.activate" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="flutter.settings" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Matt\Desktop\GitKraken Repos\TSE-Glmps\src\lib\pages" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Matt\Desktop\GitKraken Repos\TSE-Glmps\src\assets" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Matt\Desktop\GitKraken Repos\TSE-Glmps\src\lib\pages" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -52,8 +55,16 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Flutter.Why no work">
+    <configuration name="Why no work" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/src/lib/main.dart" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/src/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main.dart (1)" type="FlutterRunConfigurationType" factoryName="Flutter" nameIsGenerated="true">
       <option name="filePath" value="$PROJECT_DIR$/src/lib/main.dart" />
       <method v="2" />
     </configuration>
@@ -61,6 +72,11 @@
       <option name="filePath" value="$PROJECT_DIR$/src/lib/main.dart" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Flutter.main.dart" />
+      <item itemvalue="Flutter.main.dart (1)" />
+      <item itemvalue="Flutter.Why no work" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
