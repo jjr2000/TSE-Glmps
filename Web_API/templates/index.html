@@ -3,29 +3,34 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width initial-scale=1.0">
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='/css/style.css') }}">
 	<title>GLMPS: Find an album cover from images</title>
 </head>
 <body>
-	<img src="assets/logo.png" alt="GLMPS" class="logo">
+	<img src="{{ url_for('static', filename='/assets/logo.png')}}" alt="GLMPS" class="logo">
 	<h1>Find and preview an album with nothing but a picture</h1>
-	<nav class="menu">
+	
 		<div class="navbar">
-			<button class="button"><a href="" class="navbar">Download for Android</a></button>
-			<button class="button"><a href="" class="navbar">Github</a></button>
+			<button class="button"><a href="https://github.com/jjr2000/TSE-Glmps/releases/" download class="navbar">Download for Android</a></button>
+			<button class="button"><a href="https://github.com/jjr2000/TSE-Glmps/" class="navbar">Github</a></button>
 		</div>	
-	</nav>
-
+	
+	<div>
 	<h1>How to use</h1>
+	<div class="video-con">
+	<iframe width="95%" height="45%" src="https://www.youtube.com/embed/Kx5qMTZUUpY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+	</div>
 	<h2>Why GLMPS?</h2>
 	<p>GLMPS helps you find new music, by allowing you to quickly preview new albums the next time you go record shopping.
 	Using advanced image processing techniques allows you to take a picture of an album and using Google's image search wizardry
 	you can then listen to the tracks straight from that album, and save them for later.
-</p>
-</body>
+	</p>
+	</div>
+<div>
 
-<footer class="footer">
 	<p>Created by: Matthew Atkins, George Coldstream, Sitong Liu, James Oxley, Evaldas Piksrys, Jaidon Rymer and Ryan Sweeny</p>
 	<p>Team Software Engineerings - Assessment Three</p>
-</footer> 
+</div> 
+</body>
+
 </html>

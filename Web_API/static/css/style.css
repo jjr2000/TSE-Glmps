@@ -17,13 +17,15 @@ body{
 
 
 .menu {
-	margin: auto;	
+	margin-left: auto;	
+	margin-right: auto;
 	text-align: center;
 	font-size: 25px;
 }
 
 .navbar{
-	margin: auto;	
+	margin-left: auto;
+	margin-right: auto;	
 	text-align: center;
 	font-size: 25px;
 
@@ -34,9 +36,10 @@ body{
 	color: #2E2E2E;
 	font-size: 50px;
 	font-weight: bold;
-	
-	padding-right: 2%;
+	text-align: center;
 	text-decoration: none;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .button {
@@ -50,13 +53,31 @@ body{
 	margin: 4px 2px;
 	cursor: pointer;
 	border-radius: 16px;
+	margin-left: auto;
+	margin-right: auto;
   }
 
 .footer {
-	position: fixed;
-	left: 0;
-	bottom: 0;
 	width: 100%;
 	color: white;
 	text-align: center;
+	position: absolute;
+	left: 0;
+	bottom: 10%;
   }
+
+.video-con {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 20px;
+	height: 0;
+	overflow: hidden;
+}
+
+.video-con iframe, .video-con object, .video-con embed {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}

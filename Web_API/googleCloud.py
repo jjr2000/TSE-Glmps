@@ -2,6 +2,9 @@ import log
 
 def detect_web(imageBase):
     """Detects web annotations given an image."""
+    import os
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/var/www/glimps/GLMPS-4e21724abc58.json"
+
     from google.cloud import vision
     import io
     import base64
@@ -28,7 +31,7 @@ def detect_web(imageBase):
     except Exception as err:
         log.write(err)
 
-    return None
+    return null
 
 """    if annotations.best_guess_labels:
         for label in annotations.best_guess_labels:

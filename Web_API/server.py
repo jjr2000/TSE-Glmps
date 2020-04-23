@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_restful import Resource, Api, reqparse
 import cv2
 import numpy as np
@@ -17,7 +17,7 @@ api = Api(app)
 @app.route('/')
 
 def index(): #Default index of the website
-    return "hello welcome to GLIMPS, don't poke around here too much, it might crash :/"
+    return render_template("index.html")
 
 class imageSend(Resource): #function call for the /imageSend/ url
     def post(self): #this is a post request
