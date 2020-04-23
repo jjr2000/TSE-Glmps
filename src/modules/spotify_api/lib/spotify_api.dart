@@ -85,17 +85,15 @@ Future<bool> _searchForAlbumId(SpotifyAlbum album) async {
         }
       } else {
         //Lets give apple a shot
-        Uri test = Uri.parse(_itunesUrl + 'search').replace(queryParameters: {
+        var appleResponse = await http.get(
+          // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
+          Uri.parse(_itunesUrl + 'search').replace(queryParameters: {
           'term': album.searchTerm,
           'entity': 'album',
           'media': 'music',
           'limit': '1',
           'country': _market
-        });
-
-        var appleResponse = await http.get(test
-            // unlike with a post, the get function doesn't allow us to send parameters, to get around this we have to build a uri encoded query string.
-            );
+        }));
         if (appleResponse.statusCode == 200) {
           decoded = json.decode(appleResponse.body);
           if (decoded['resultCount'] > 0) {
