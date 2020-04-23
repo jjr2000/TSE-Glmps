@@ -1,20 +1,14 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+Hello welcome to GLMPS! Discover new music with the power of image processing. Preview tracks of an album just by taking a picture. 
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Demo 
+https://www.youtube.com/watch?v=Kx5qMTZUUpY&feature=youtu.be
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+# Why GLMPS?
+GLMPS helps you find new music, by allowing you to quickly preview new albums the next time you go record shopping. Using advanced image processing techniques allows you to take a picture of an album and using Google's image search wizardry you can then listen to the tracks straight from that album, and save them for later. 
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Created by
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+Matthew Atkins, George Coldstream, Sitong Liu, James Oxley, Evaldas Piksrys, Jaidon Rymer and Ryan Sweeny
+
+Team Software Engineerings - Assessment Three
