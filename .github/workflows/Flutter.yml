@@ -1,17 +1,19 @@
 # Trigger the workflow on push or pull request
-on: 
-  push:
-    tags-ignore:
-      - '*.*.*'
-  pull_request:
-    tags-ignore:
-      - '*.*.*'  
+on:
+    push:
+      branches:
+        - '*'
+      tags-ignore:
+        - '*'
+    pull_request:
+      branches:
+        - '*'
 #The name of your workflow.
 name:  flutter test and build artificat
 
 #A workflow run is made up of one or more jobs. Jobs run in parallel by default.
 jobs:
-  test and build:
+  test-and-build:
     #The type of machine to run the job on. [windows,macos, ubuntu , self-hosted]
     runs-on: macos-latest
     #sequence of tasks called
