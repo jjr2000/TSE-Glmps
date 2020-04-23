@@ -1,0 +1,19 @@
+# .github/workflows/build-docker-image.yml
+name: Add Release File
+
+on: release
+
+jobs:
+  AttachFile:
+    name: upload apk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull source
+        uses: actions/checkout@v1
+
+      - name: Upload to release
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: /Releases/${{ github.ref }}/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
