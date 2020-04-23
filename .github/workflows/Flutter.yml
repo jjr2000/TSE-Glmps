@@ -1,7 +1,11 @@
 # Trigger the workflow on push or pull request
-on: [push,pull_request]
-  tags-ignore:
-      - '*'     
+on: 
+  push:
+    tags-ignore:
+      - '*'
+  pull_request:
+    tags-ignore:
+      - '*'  
 #The name of your workflow.
 name:  flutter test and build artificat
 
