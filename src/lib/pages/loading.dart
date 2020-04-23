@@ -17,40 +17,71 @@ class WebRequestLoading extends StatefulWidget {
 class _WebRequestLoadingState extends State<WebRequestLoading> {
   String error = "";
 
-  @override
-  void initState() {
-    super.initState();
-    print(widget.base);
-    webDetect(widget.base).then((value) {
-      if(value.found) {
-        print(value.result);
-        searchAlbum(value.result).then((value2) {
-          print(value2);
-          if (value2.found) {
-            //we got an album time to add it into our db
-            DbProvider().insert(value2).then((value3) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Links(album: value3),
-                  )
-              );
-            });
-
+  void _doSearch(String base) async {
+    WebDetect term = await webDetect(widget.base);
+    if (term.found) {
+      print(term.result);
+      bool retry = true;
+      while (retry) {
+        SpotifyAlbum album = await searchAlbum(term.result);
+        print(album);
+        if (album.found) {
+          retry = false;
+          //we got an album time to add it into our db
+          album = await DbProvider().insert(album);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Links(album: album),
+              ));
+        } else {
+          if (term.result.contains('vinyl') ||
+              term.result.contains('record') ||
+              term.result.contains('cd') ||
+              term.result.contains('lp') ||
+              term.result.contains('ep') ||
+              term.result.contains('poster') ||
+              term.result.contains('album') ||
+              term.result.contains('cover') ||
+              term.result.contains('itunes') ||
+              term.result.contains('spotify') ||
+              term.result.contains('amazon') ||
+              term.result.contains('outfit')) {
+            term.result = term.result
+                .replaceAll('vinyl', '')
+                .replaceAll('record', '')
+                .replaceAll('cd', '')
+                .replaceAll('lp', '')
+                .replaceAll('ep', '')
+                .replaceAll('poster', '')
+                .replaceAll('album', '')
+                .replaceAll('cover', '')
+                .replaceAll('itunes', '')
+                .replaceAll('spotify', '')
+                .replaceAll('amazon', '')
+                .replaceAll('outfit', '');
           } else {
+            retry = false;
             //Let User know we couldn't find the album
             error = "Album not found";
             Navigator.pop(context);
             _showDialog();
           }
-        });
-      } else {
-        // Tell the user their image was shit and have them retake it.
-        error = "Detection error please check lighting and ensure the record is fully visible.";
-        Navigator.pop(context);
-        _showDialog();
+        }
       }
-    });
+    } else {
+      // Tell the user their image was shit and have them retake it.
+      error =
+          "Detection error please check lighting and ensure the record is fully visible.";
+      Navigator.pop(context);
+      _showDialog();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _doSearch(widget.base);
   }
 
   Future<void> _showDialog() async {
@@ -60,20 +91,16 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.grey[900],
-          title: Text('Oops!',
-            style: TextStyle(
-                fontSize: 20,
-                color: Colors.white
-            ),
+          title: Text(
+            'Oops!',
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(error,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white
-                  ),
+                Text(
+                  error,
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ],
             ),
@@ -95,36 +122,30 @@ class _WebRequestLoadingState extends State<WebRequestLoading> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.grey[900],
-        body: error == "" ?
-        Center(child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 30.0),
-              child: Text("Fetching the results my dude!",
-                style: TextStyle(
-                  fontSize: 20,
-                    color: Colors.white
-                )),
-            ),
-
-          ],
-        )) :
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(error),
-              FlatButton(
-                child: Text("Back"),
-                onPressed: () {
-
-                },
-              )
-            ],
-          ),
-        )
-    );
+        body: error == ""
+            ? Center(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 30.0),
+                    child: Text("Fetching the results my dude!",
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
+                  ),
+                ],
+              ))
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(error),
+                    FlatButton(
+                      child: Text("Back"),
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+              ));
   }
 }

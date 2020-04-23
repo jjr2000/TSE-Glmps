@@ -34,9 +34,10 @@ class _LinksState extends State<Links> {
   void initState() {
     super.initState();
     _color = _randomColor.randomColor(colorBrightness: ColorBrightness.light);
-    _playerSongName = widget.album.tracks[0].title;
-    _url = widget.album.tracks[0].previewUrl;
-    
+    if(widget.album.tracks.length > 0) {
+      _playerSongName = widget.album.tracks[0].title;
+      _url = widget.album.tracks[0].previewUrl;
+    }
     initPlayer();
   }
 

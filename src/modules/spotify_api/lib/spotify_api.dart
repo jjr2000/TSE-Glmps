@@ -153,9 +153,8 @@ Future<bool> _searchForAlbum(SpotifyAlbum album) async {
         success = true;
         album.tracks = List<SpotifyTrack>(decoded['resultCount']);
 
-        for(int i = 0; i < decoded['resultCount']; i++)
+        for(Map<String, dynamic> track in decoded['results'])
         {
-          Map<String, dynamic> track = decoded['results'][i];
           int trackNum = track['trackNumber'] - 1;
           print(trackNum);
           if(album.tracks[trackNum] != null)
@@ -201,12 +200,11 @@ Future<bool> _searchForAlbum(SpotifyAlbum album) async {
 
         //Making sure artists is blank before we loop
         album.artists = '';
-        List<dynamic> artists = decoded['artists'];
         // loop through the artists list
-        for (int i = 0; i < artists.length;)
+        for (Map<String, dynamic> artist in decoded['artists'])
           // Add the artist name to the string and if it's not the last one also a comma and a space
           album.artists +=
-          '${artists[i]['name']}${++i < artists.length ? ', ' : ''}';
+          '${artist['name']}${artist != decoded['artists'].last ? ', ' : ''}';
 
         album.title = decoded['name'];
         // The first image is the high resolution one so that's what we'll use
@@ -232,9 +230,8 @@ Future<bool> _searchForAlbum(SpotifyAlbum album) async {
         }
         // Make sure the list of tracks is empty before we loop through the returned ones.
         album.tracks.clear();
-        List<dynamic> tracks = decoded['tracks']['items'];
-        for (int i = 0; i < tracks.length; i++) {
-          String previewUrl = tracks[i]['preview_url'];
+        for (Map<String, dynamic> track in decoded['tracks']['items']) {
+          String previewUrl = track['preview_url'];
           // Spotify isn't great at giving us preview Url's so if it hasn't returned one we'll search apples itunes library of previews instead.
           if (previewUrl?.isEmpty ?? true) {
             var itunesResponse = await http.get(
@@ -242,7 +239,7 @@ Future<bool> _searchForAlbum(SpotifyAlbum album) async {
                 Uri.parse(
                     '$_itunesUrl/search'
                         + '?term=${Uri.encodeComponent(
-                        tracks[i]['name'] + ', ' + album.artists)}'
+                        track['name'] + ', ' + album.artists)}'
                         + '&limit=1'
                         + '&country=$_market'
                         + '&entity=musicTrack'
@@ -257,8 +254,8 @@ Future<bool> _searchForAlbum(SpotifyAlbum album) async {
                 previewUrl = itunesDecoded['results'][0]['previewUrl'];
             }
           }
-          album.tracks.add(new SpotifyTrack(tracks[i]['name'], previewUrl,
-              Duration(milliseconds: tracks[i]['duration_ms'])));
+          album.tracks.add(new SpotifyTrack(track['name'], previewUrl,
+              Duration(milliseconds: track['duration_ms'])));
         }
       } else {
         print('something went wrong, status code: ${response.statusCode

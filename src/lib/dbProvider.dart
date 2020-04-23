@@ -72,8 +72,7 @@ PRAGMA foreign_keys=on;
 
     album.dbId = await db.insert('album', album.toMap());
     var batch = db.batch();
-    for(int i = 0; i < album.tracks.length; i++) {
-      SpotifyTrack track = album.tracks[i];
+    for(SpotifyTrack track in album.tracks) {
       track.dbAlbumId = album.dbId;
       batch.insert('track', track.toMap());
     }
@@ -98,8 +97,8 @@ PRAGMA foreign_keys=on;
           where: 'dbAlbumId = ?',
           whereArgs: [album.dbId]);
       album.tracks = List<SpotifyTrack>();
-      for (int i = 0; i < tracks.length; i++) {
-        album.tracks.add(SpotifyTrack.fromMap(tracks[i]));
+      for (Map track in tracks) {
+        album.tracks.add(SpotifyTrack.fromMap(track));
       }
       db.close();
       return album;
@@ -114,8 +113,8 @@ PRAGMA foreign_keys=on;
 
     List<Map> dbAlbums = await db.query('album',
         columns: ['id', 'artists', 'title', 'imageUrl', 'releaseDatePrecision', 'releaseDate', 'dbId']);
-      for (int i = 0; i < dbAlbums.length; i++) {
-        albums.add(SpotifyAlbum.fromMap(dbAlbums[i]));
+      for (Map dbAlbum in dbAlbums) {
+        albums.add(SpotifyAlbum.fromMap(dbAlbum));
       }
       db.close();
 
