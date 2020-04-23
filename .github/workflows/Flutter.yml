@@ -2,6 +2,8 @@
 name:  flutter test and build artificat
 # Trigger the workflow on push or pull request
 on: [push,pull_request]
+  tags-ignore:
+      - '*'     
 #A workflow run is made up of one or more jobs. Jobs run in parallel by default.
 jobs:
   test:
@@ -39,8 +41,17 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           ALIAS: ${{ secrets.ALIAS }}
           KEY_PATH: key.jks
-      - name: Create a Release APK
-        uses: ncipollo/release-action@v1
+      - uses: actions/upload-artifact@v1
         with:
-          artifacts: "src/build/app/outputs/apk/release/*.apk"
-          token: ${{ secrets.TOKEN }}
+          name: app-armeabi-v7a-release.apk
+          path: src/build/app/outputs/apk/release/app-armeabi-v7a-release.apk
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: app-arm64-v8a-release.apk
+          path: src/build/app/outputs/apk/release/app-arm64-v8a-release.apk
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: app-x86_64-release.apk
+          path: src/build/app/outputs/apk/release/app-x86_64-release.apk
